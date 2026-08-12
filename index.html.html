@@ -1,0 +1,626 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Standardized Customer Service Workflows</title>
+    <style>
+        :root {
+            --primary-color: #0056b3;
+            --bg-color: #f4f7f6;
+            --sidebar-bg: #ffffff;
+            --text-color: #333333;
+            --border-color: #dddddd;
+            --sidebar-width: 350px;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        body {
+            display: flex;
+            height: 100vh;
+            background-color: var(--bg-color);
+            color: var(--text-color);
+            overflow: hidden;
+        }
+
+        /* Sidebar Styles */
+        .sidebar {
+            width: var(--sidebar-width);
+            flex-shrink: 0;
+            background-color: var(--sidebar-bg);
+            border-right: 1px solid var(--border-color);
+            display: flex;
+            flex-direction: column;
+            box-shadow: 2px 0 5px rgba(0,0,0,0.05);
+            z-index: 10;
+            transition: margin-left 0.3s ease; 
+        }
+
+        .sidebar.collapsed {
+            margin-left: calc(var(--sidebar-width) * -1);
+        }
+
+        .sidebar-header {
+            padding: 20px;
+            background-color: var(--primary-color);
+            color: white;
+        }
+
+        .sidebar-header h2 {
+            font-size: 1.2rem;
+            white-space: nowrap;
+        }
+
+        /* Search Bar Styles */
+        .search-container {
+            padding: 15px 20px;
+            background-color: #f8fafc;
+            border-bottom: 1px solid var(--border-color);
+        }
+
+        .search-input {
+            width: 100%;
+            padding: 10px 15px;
+            border: 1px solid #cbd5e1;
+            border-radius: 6px;
+            font-size: 0.95rem;
+            outline: none;
+            transition: border-color 0.2s;
+        }
+
+        .search-input:focus {
+            border-color: var(--primary-color);
+            box-shadow: 0 0 0 2px rgba(0, 86, 179, 0.1);
+        }
+
+        .no-results {
+            padding: 20px;
+            text-align: center;
+            color: #64748b;
+            font-style: italic;
+            display: none;
+        }
+
+        /* Category / Accordion Styles */
+        .category-container {
+            overflow-y: auto;
+            flex-grow: 1;
+        }
+
+        .category-header {
+            padding: 12px 20px;
+            background-color: #e2e8f0;
+            border-bottom: 1px solid var(--border-color);
+            cursor: pointer;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            font-weight: bold;
+            color: #334155;
+            transition: background-color 0.2s;
+        }
+
+        .category-header:hover {
+            background-color: #cbd5e1;
+        }
+
+        .category-icon {
+            font-size: 0.8rem;
+            transition: transform 0.2s;
+        }
+
+        .category-header.open .category-icon {
+            transform: rotate(90deg);
+        }
+
+        .workflow-list {
+            list-style: none;
+            display: none; 
+            background-color: #f8fafc;
+        }
+
+        .workflow-list.open {
+            display: block;
+        }
+
+        .workflow-item {
+            padding: 12px 20px 12px 35px; 
+            border-bottom: 1px solid var(--border-color);
+            cursor: pointer;
+            transition: background-color 0.2s ease;
+        }
+
+        .workflow-item:hover {
+            background-color: #e0f2fe;
+        }
+
+        .workflow-item.active {
+            background-color: #bae6fd;
+            border-left: 4px solid var(--primary-color);
+            padding-left: 31px; 
+            font-weight: bold;
+        }
+
+        .workflow-title {
+            font-size: 0.95rem;
+            margin-bottom: 5px;
+        }
+
+        .workflow-label {
+            font-size: 0.75rem;
+            color: #64748b;
+            background-color: #e2e8f0;
+            padding: 2px 6px;
+            border-radius: 4px;
+            display: inline-block;
+        }
+
+        /* Main Content Styles */
+        .main-content {
+            flex-grow: 1;
+            display: flex;
+            flex-direction: column;
+            position: relative;
+            min-width: 0; 
+        }
+
+        .toolbar {
+            padding: 15px 20px;
+            background-color: var(--sidebar-bg);
+            border-bottom: 1px solid var(--border-color);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.05);
+            z-index: 5;
+        }
+
+        .toolbar-left {
+            display: flex;
+            align-items: center;
+        }
+
+        .toggle-btn {
+            background: none;
+            border: none;
+            font-size: 1.5rem;
+            color: var(--primary-color);
+            cursor: pointer;
+            margin-right: 15px;
+            padding: 5px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 4px;
+            transition: background-color 0.2s;
+        }
+
+        .toggle-btn:hover {
+            background-color: #e9ecef;
+        }
+
+        .toolbar h1 {
+            font-size: 1.3rem;
+            color: var(--primary-color);
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+
+        .controls button {
+            background-color: white;
+            border: 1px solid var(--border-color);
+            padding: 8px 12px;
+            margin-left: 5px;
+            cursor: pointer;
+            border-radius: 4px;
+            font-weight: bold;
+            transition: all 0.2s;
+            white-space: nowrap;
+        }
+
+        .controls button:hover {
+            background-color: #e9ecef;
+        }
+
+        /* Viewer Container */
+        .viewer-container {
+            flex-grow: 1;
+            overflow: auto; 
+            padding: 20px;
+            display: flex;
+            justify-content: flex-start;
+            align-items: flex-start;
+            background-color: #e0e5ec;
+            cursor: grab;
+        }
+
+        .viewer-container.grabbing {
+            cursor: grabbing;
+        }
+
+        .canvas {
+            transform-origin: top left;
+            transition: transform 0.1s ease-out;
+            box-shadow: 0 10px 20px rgba(0,0,0,0.1);
+            background-color: white;
+            user-select: none; 
+            -webkit-user-drag: none;
+            margin: auto;
+        }
+
+        .canvas img {
+            max-width: 100%;
+            height: auto;
+            display: block;
+            pointer-events: none;
+        }
+        
+        .empty-state {
+            text-align: center;
+            margin-top: 20%;
+            color: #777;
+            width: 100%;
+        }
+
+        /* PDF Viewer */
+        .pdf-viewer {
+            width: 100%;
+            height: 100%;
+            border: none;
+            flex-grow: 1;
+            background-color: white;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+        }
+    </style>
+</head>
+<body>
+
+    <div class="sidebar" id="sidebar">
+        <div class="sidebar-header">
+            <h2>Workflow Directory</h2>
+        </div>
+        <div class="search-container">
+            <input type="text" id="searchInput" class="search-input" placeholder="Search workflows or documents..." onkeyup="filterWorkflows()">
+        </div>
+        <div class="category-container" id="categoryContainer">
+            <div id="noResults" class="no-results">No relevant content found.</div>
+            <!-- Categories and nested list items will be injected here by JavaScript -->
+        </div>
+    </div>
+
+    <div class="main-content">
+        <div class="toolbar">
+            <div class="toolbar-left">
+                <button class="toggle-btn" onclick="toggleSidebar()" title="Toggle Menu">☰</button>
+                <h1 id="currentWorkflowTitle">Select a workflow</h1>
+            </div>
+            <div class="controls" id="zoomControls">
+                <button onclick="zoomOut()">➖ Zoom Out</button>
+                <button onclick="resetZoom()">🔄 Reset</button>
+                <button onclick="zoomIn()">➕ Zoom In</button>
+            </div>
+        </div>
+        <div class="viewer-container" id="viewerContainer">
+            <div class="empty-state" id="emptyState">
+                <h3>Please select a document or workflow from the menu to view.</h3>
+            </div>
+            <!-- Image Canvas for Flowcharts -->
+            <div class="canvas" id="canvas" style="display: none;">
+                <img id="workflowImage" src="" alt="Flowchart" onerror="this.onerror=null; this.src='https://via.placeholder.com/800x600.png?text=Image+Not+Found';">
+            </div>
+            <!-- iFrame for PDF Documents -->
+            <iframe class="pdf-viewer" id="pdfViewer" style="display: none;" src=""></iframe>
+        </div>
+    </div>
+
+    <script>
+        // Nested Database of categories and workflows
+        const workflowData = [
+            {
+                categoryId: 'cat-sop-master',
+                categoryName: 'SOP Process Master',
+                isOpen: true, 
+                workflows: [
+                    { id: 'sop-master', title: 'Customer Service SOP Master', label: 'Customer Service SOP Master', fileSrc: 'Customer Service SOP Master.pdf' },
+                    { id: 'sop-procedures', title: 'Customer Service Procedures', label: 'Customer Service Procedures', fileSrc: 'Customer Service Procedures.pdf' },
+                    { id: 'sop-staff', title: 'Customer Service Staff Responsibilities', label: 'Customer Service Staff Responsibilities', fileSrc: 'Customer Service Staff Responsibilities.pdf' },
+                    { id: 'sop-hours', title: 'Customer Service Operating Hours', label: 'Customer Service Operating Hours', fileSrc: 'Customer Service Operating Hours.pdf' },
+                    { id: 'sop-workflow', title: 'Customer Service Workflow', label: 'Customer Service Workflow', fileSrc: 'Customer Service Workflow.pdf' },
+                    { id: 'sop-system', title: 'Customer Service System', label: 'Customer Service System', fileSrc: 'Customer Service System.pdf' },
+                    { id: 'sop-flowchart', title: 'Customer Service Flowchart', label: 'Customer Service Flowchart', fileSrc: 'Customer Service Flowchart.pdf' },
+                    { id: 'sop-priority', title: 'Priority Matrix', label: 'Priority Matrix', fileSrc: 'Priority Matrix.pdf' },
+                    { id: 'sop-escalation', title: 'Escalation', label: 'Escalation', fileSrc: 'Escalation.pdf' },
+                    { id: 'sop-examples', title: 'Examples', label: 'Examples', fileSrc: 'Examples.pdf' }
+                ]
+            },
+            {
+                categoryId: 'cat-inquiry',
+                categoryName: 'Inquiry SOP',
+                isOpen: false, 
+                workflows: [
+                    { id: 'logging', title: 'Customer Contact Logging Protocol', label: 'Data Entry & Verification', fileSrc: 'Customer Contact Logging Protocol.png' },
+                    { id: 'sla', title: 'SLA & Time Frames Workflow', label: 'Service Level Agreements', fileSrc: 'SLA & Time Frames Workflow.png' },
+                    { id: 'escalation-formula', title: 'Tiered Customer Issue Resolution', label: 'Escalation Tiering', fileSrc: 'Tiered Customer Issue Resolution.png' },
+                    { id: 'resolution', title: 'The Resolution Process Workflow', label: 'General Resolution Standard', fileSrc: 'The Resolution Process Workflow.png' },
+                    { id: 'escalation-criteria', title: 'Criteria & Tiered Accountability', label: 'Escalation Triggers', fileSrc: 'Criteria & Tiered Accountability.png' }
+                ]
+            },
+            {
+                categoryId: 'cat-request',
+                categoryName: 'Request SOP',
+                isOpen: false,
+                workflows: [
+                    { id: 'req-account', title: 'Account Creation Process', label: 'Onboarding Placeholder', fileSrc: 'Account Creation Process.png' },
+                    { id: 'req-upgrade', title: 'Service Upgrade Protocol', label: 'Sales Placeholder', fileSrc: 'Service Upgrade Protocol.png' }
+                ]
+            },
+            {
+                categoryId: 'cat-complaint',
+                categoryName: 'Complaint SOP',
+                isOpen: false,
+                workflows: [
+                    { id: 'comp-refund', title: 'Refund Processing Guidelines', label: 'Finance Placeholder', fileSrc: 'Refund Processing Guidelines.png' },
+                    { id: 'comp-deescalation', title: 'Hostile Customer De-escalation', label: 'Safety Placeholder', fileSrc: 'Hostile Customer De-escalation.png' },
+                    { id: 'comp-legal', title: 'Legal Threat Routing', label: 'Compliance Placeholder', fileSrc: 'Legal Threat Routing.png' }
+                ]
+            }
+        ];
+
+        let currentScale = 1;
+        const scaleStep = 0.15;
+        const maxScale = 4;
+        const minScale = 0.3;
+
+        // Mouse Dragging Variables
+        let isDragging = false;
+        let startX, startY, scrollLeft, scrollTop;
+        let isPdfMode = false;
+
+        // Initialize the application
+        function init() {
+            const container = document.getElementById('categoryContainer');
+            
+            workflowData.forEach((category) => {
+                // 1. Create Category Header
+                const header = document.createElement('div');
+                header.className = `category-header ${category.isOpen ? 'open' : ''}`;
+                header.innerHTML = `
+                    <span>📁 ${category.categoryName}</span>
+                    <span class="category-icon">▶</span>
+                `;
+                
+                // 2. Create Workflow List for this Category
+                const ul = document.createElement('ul');
+                ul.className = `workflow-list ${category.isOpen ? 'open' : ''}`;
+                ul.id = category.categoryId;
+
+                // 3. Populate Workflows
+                category.workflows.forEach((workflow) => {
+                    const li = document.createElement('li');
+                    li.className = 'workflow-item';
+                    li.id = `item-${workflow.id}`;
+                    li.innerHTML = `
+                        <div class="workflow-title">${workflow.title}</div>
+                        <div class="workflow-label">${workflow.label}</div>
+                    `;
+                    // Pass the workflow object to load function
+                    li.onclick = () => loadWorkflow(workflow);
+                    ul.appendChild(li);
+                });
+
+                // 4. Add Toggle Logic to Header
+                header.onclick = () => {
+                    // Only toggle if we are not actively searching
+                    if(document.getElementById('searchInput').value.trim() === '') {
+                        header.classList.toggle('open');
+                        ul.classList.toggle('open');
+                        category.isOpen = header.classList.contains('open');
+                    }
+                };
+
+                container.appendChild(header);
+                container.appendChild(ul);
+            });
+
+            setupInteractivity();
+        }
+
+        // Live Search Filter Function
+        function filterWorkflows() {
+            const query = document.getElementById('searchInput').value.toLowerCase().trim();
+            let anyMatch = false;
+
+            workflowData.forEach((category) => {
+                let categoryMatch = false;
+                const ul = document.getElementById(category.categoryId);
+                const header = ul.previousElementSibling;
+
+                category.workflows.forEach((workflow) => {
+                    const li = document.getElementById(`item-${workflow.id}`);
+                    const matchesSearch = workflow.title.toLowerCase().includes(query) || 
+                                          workflow.label.toLowerCase().includes(query);
+                    
+                    if (matchesSearch) {
+                        li.style.display = 'block';
+                        categoryMatch = true;
+                        anyMatch = true;
+                    } else {
+                        li.style.display = 'none';
+                    }
+                });
+
+                // Handle category visibility and auto-expansion based on search
+                if (query.length === 0) {
+                    // Reset to default state if search is empty
+                    header.style.display = 'flex';
+                    if (category.isOpen) {
+                        header.classList.add('open');
+                        ul.classList.add('open');
+                    } else {
+                        header.classList.remove('open');
+                        ul.classList.remove('open');
+                    }
+                } else {
+                    if (categoryMatch) {
+                        // Show category and auto-expand to reveal results
+                        header.style.display = 'flex';
+                        header.classList.add('open');
+                        ul.classList.add('open');
+                    } else {
+                        // Hide category if no matches exist inside it
+                        header.style.display = 'none';
+                        header.classList.remove('open');
+                        ul.classList.remove('open');
+                    }
+                }
+            });
+
+            // Toggle "No results found" message
+            document.getElementById('noResults').style.display = (anyMatch || query.length === 0) ? 'none' : 'block';
+        }
+
+        // Sidebar Toggle Function
+        function toggleSidebar() {
+            const sidebar = document.getElementById('sidebar');
+            sidebar.classList.toggle('collapsed');
+        }
+
+        // Set up Drag to Pan and Scroll to Zoom
+        function setupInteractivity() {
+            const viewer = document.getElementById('viewerContainer');
+
+            // --- Scroll to Zoom (Images only) ---
+            viewer.addEventListener('wheel', (e) => {
+                if (isPdfMode || document.getElementById('canvas').style.display === 'none') return;
+                
+                e.preventDefault(); 
+                
+                if (e.deltaY < 0) {
+                    zoomIn();
+                } else {
+                    zoomOut();
+                }
+            }, { passive: false });
+
+            // --- Drag to Pan (Images only) ---
+            viewer.addEventListener('mousedown', (e) => {
+                if (isPdfMode) return;
+                isDragging = true;
+                viewer.classList.add('grabbing');
+                
+                startX = e.pageX - viewer.offsetLeft;
+                startY = e.pageY - viewer.offsetTop;
+                scrollLeft = viewer.scrollLeft;
+                scrollTop = viewer.scrollTop;
+            });
+
+            viewer.addEventListener('mouseleave', () => {
+                isDragging = false;
+                viewer.classList.remove('grabbing');
+            });
+
+            viewer.addEventListener('mouseup', () => {
+                isDragging = false;
+                viewer.classList.remove('grabbing');
+            });
+
+            viewer.addEventListener('mousemove', (e) => {
+                if (!isDragging || isPdfMode) return;
+                e.preventDefault(); 
+                
+                const x = e.pageX - viewer.offsetLeft;
+                const y = e.pageY - viewer.offsetTop;
+                
+                const moveX = (x - startX) * 1.5; 
+                const moveY = (y - startY) * 1.5;
+                
+                viewer.scrollLeft = scrollLeft - moveX;
+                viewer.scrollTop = scrollTop - moveY;
+            });
+        }
+
+        // Load a specific workflow into the viewer
+        function loadWorkflow(workflow) {
+            // Remove active class from all items
+            document.querySelectorAll('.workflow-item').forEach(el => el.classList.remove('active'));
+            // Add active class to clicked item
+            document.getElementById(`item-${workflow.id}`).classList.add('active');
+            
+            // Update Title
+            document.getElementById('currentWorkflowTitle').innerText = workflow.title;
+            
+            // Check file extension
+            isPdfMode = workflow.fileSrc.toLowerCase().endsWith('.pdf');
+            
+            const canvas = document.getElementById('canvas');
+            const pdfViewer = document.getElementById('pdfViewer');
+            const zoomControls = document.getElementById('zoomControls');
+            const viewerContainer = document.getElementById('viewerContainer');
+            
+            // Hide empty state
+            document.getElementById('emptyState').style.display = 'none';
+
+            if (isPdfMode) {
+                // Switch to PDF Viewer Mode
+                canvas.style.display = 'none';
+                pdfViewer.style.display = 'block';
+                pdfViewer.src = workflow.fileSrc;
+                
+                // Hide custom zoom controls and remove grab cursor
+                zoomControls.style.display = 'none';
+                viewerContainer.style.cursor = 'default';
+                viewerContainer.style.padding = '0px'; 
+            } else {
+                // Switch to Image Canvas Mode
+                pdfViewer.style.display = 'none';
+                pdfViewer.src = ''; 
+                canvas.style.display = 'block';
+                document.getElementById('workflowImage').src = workflow.fileSrc;
+                
+                // Show custom zoom controls and restore grab cursor
+                zoomControls.style.display = 'block';
+                viewerContainer.style.cursor = 'grab';
+                viewerContainer.style.padding = '20px';
+                resetZoom();
+            }
+        }
+
+        // Zoom Functions (For image canvas only)
+        function applyZoom() {
+            const canvas = document.getElementById('canvas');
+            canvas.style.transform = `scale(${currentScale})`;
+        }
+
+        function zoomIn() {
+            if (currentScale < maxScale) {
+                currentScale = Math.min(currentScale + scaleStep, maxScale);
+                applyZoom();
+            }
+        }
+
+        function zoomOut() {
+            if (currentScale > minScale) {
+                currentScale = Math.max(currentScale - scaleStep, minScale);
+                applyZoom();
+            }
+        }
+
+        function resetZoom() {
+            currentScale = 1;
+            applyZoom();
+            document.getElementById('viewerContainer').scrollTop = 0;
+            document.getElementById('viewerContainer').scrollLeft = 0;
+        }
+
+        // Run initialization on load
+        window.onload = init;
+    </script>
+</body>
+</html>
