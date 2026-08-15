@@ -1,0 +1,2444 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Standardized Customer Service Workflows & SOP Master</title>
+    <style>
+        :root {
+            --primary-color: #0056b3;
+            --primary-hover: #003d80;
+            --bg-color: #f4f7f6;
+            --sidebar-bg: #ffffff;
+            --text-color: #333333;
+            --border-color: #dddddd;
+            --sidebar-width: 380px;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        body {
+            display: flex;
+            height: 100vh;
+            background-color: var(--bg-color);
+            color: var(--text-color);
+            overflow: hidden;
+        }
+
+        /* Sidebar Styles */
+        .sidebar {
+            width: var(--sidebar-width);
+            flex-shrink: 0;
+            background-color: var(--sidebar-bg);
+            border-right: 1px solid var(--border-color);
+            display: flex;
+            flex-direction: column;
+            box-shadow: 2px 0 5px rgba(0,0,0,0.05);
+            z-index: 10;
+            transition: margin-left 0.3s ease; 
+        }
+
+        .sidebar.collapsed {
+            margin-left: calc(var(--sidebar-width) * -1);
+        }
+
+        .sidebar-header {
+            padding: 20px;
+            background-color: var(--primary-color);
+            color: white;
+        }
+
+        .sidebar-header h2 {
+            font-size: 1.2rem;
+            white-space: nowrap;
+        }
+
+        /* Search Bar Styles */
+        .search-container {
+            padding: 15px 20px;
+            background-color: #f8fafc;
+            border-bottom: 1px solid var(--border-color);
+        }
+
+        .search-input {
+            width: 100%;
+            padding: 10px 15px;
+            border: 1px solid #cbd5e1;
+            border-radius: 6px;
+            font-size: 0.95rem;
+            outline: none;
+            transition: border-color 0.2s;
+        }
+
+        .search-input:focus {
+            border-color: var(--primary-color);
+            box-shadow: 0 0 0 2px rgba(0, 86, 179, 0.1);
+        }
+
+        .no-results {
+            padding: 20px;
+            text-align: center;
+            color: #64748b;
+            font-style: italic;
+            display: none;
+        }
+
+        /* Category / Accordion Styles */
+        .category-container {
+            overflow-y: auto;
+            flex-grow: 1;
+        }
+
+        .category-header {
+            padding: 12px 20px;
+            background-color: #e2e8f0;
+            border-bottom: 1px solid var(--border-color);
+            cursor: pointer;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            font-weight: bold;
+            color: #334155;
+            transition: background-color 0.2s;
+        }
+
+        .category-header:hover {
+            background-color: #cbd5e1;
+        }
+
+        .category-icon {
+            font-size: 0.8rem;
+            transition: transform 0.2s;
+        }
+
+        .category-header.open .category-icon {
+            transform: rotate(90deg);
+        }
+
+        .workflow-list {
+            list-style: none;
+            display: none; 
+            background-color: #f8fafc;
+        }
+
+        .workflow-list.open {
+            display: block;
+        }
+
+        /* Workflow Item Styles */
+        .workflow-item {
+            padding: 12px 20px 12px 25px; 
+            border-bottom: 1px solid var(--border-color);
+            cursor: pointer;
+            transition: background-color 0.2s ease;
+            position: relative;
+        }
+
+        .workflow-item-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        /* Level 2 Sub-Item Indentation & Nested Accordion */
+        .sub-workflow-list {
+            list-style: none;
+            display: none;
+            background-color: #f1f5f9;
+        }
+
+        .sub-workflow-list.open {
+            display: block;
+        }
+
+        .workflow-item.sub-item {
+            padding-left: 45px;
+            background-color: #f1f5f9;
+            font-size: 0.9rem;
+        }
+
+        .workflow-item:hover {
+            background-color: #e0f2fe;
+        }
+
+        .workflow-item.active {
+            background-color: #bae6fd;
+            border-left: 4px solid var(--primary-color);
+            font-weight: bold;
+        }
+
+        .workflow-title {
+            font-size: 0.95rem;
+            margin-bottom: 3px;
+        }
+
+        .workflow-label {
+            font-size: 0.75rem;
+            color: #64748b;
+            background-color: #e2e8f0;
+            padding: 2px 6px;
+            border-radius: 4px;
+            display: inline-block;
+        }
+
+        .sub-toggle-icon {
+            font-size: 0.75rem;
+            color: #64748b;
+            padding: 4px 8px;
+            border-radius: 4px;
+            transition: transform 0.2s, background-color 0.2s;
+        }
+
+        .sub-toggle-icon:hover {
+            background-color: #cbd5e1;
+            color: #0f172a;
+        }
+
+        .sub-toggle-icon.open {
+            transform: rotate(90deg);
+        }
+
+        /* Main Content Styles */
+        .main-content {
+            flex-grow: 1;
+            display: flex;
+            flex-direction: column;
+            position: relative;
+            min-width: 0; 
+        }
+
+        .toolbar {
+            padding: 15px 20px;
+            background-color: var(--sidebar-bg);
+            border-bottom: 1px solid var(--border-color);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.05);
+            z-index: 5;
+        }
+
+        .toolbar-left {
+            display: flex;
+            align-items: center;
+        }
+
+        .toggle-btn {
+            background: none;
+            border: none;
+            font-size: 1.5rem;
+            color: var(--primary-color);
+            cursor: pointer;
+            margin-right: 15px;
+            padding: 5px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 4px;
+            transition: background-color 0.2s;
+        }
+
+        .toggle-btn:hover {
+            background-color: #e9ecef;
+        }
+
+        .toolbar h1 {
+            font-size: 1.3rem;
+            color: var(--primary-color);
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+
+        .controls button {
+            background-color: white;
+            border: 1px solid var(--border-color);
+            padding: 8px 12px;
+            margin-left: 5px;
+            cursor: pointer;
+            border-radius: 4px;
+            font-weight: bold;
+            transition: all 0.2s;
+            white-space: nowrap;
+        }
+
+        .controls button:hover {
+            background-color: #e9ecef;
+        }
+
+        /* Viewer Container */
+        .viewer-container {
+            flex-grow: 1;
+            overflow: auto; 
+            padding: 20px;
+            display: flex;
+            justify-content: flex-start;
+            align-items: flex-start;
+            background-color: #e0e5ec;
+        }
+
+        .viewer-container.grab-mode {
+            cursor: grab;
+        }
+
+        .viewer-container.grabbing {
+            cursor: grabbing;
+        }
+
+        /* Image Canvas for Flowcharts */
+        .canvas {
+            transform-origin: top left;
+            transition: transform 0.1s ease-out;
+            box-shadow: 0 10px 20px rgba(0,0,0,0.1);
+            background-color: white;
+            user-select: none; 
+            -webkit-user-drag: none;
+            margin: auto;
+        }
+
+        .canvas img {
+            max-width: 100%;
+            height: auto;
+            display: block;
+            pointer-events: none;
+        }
+
+        /* Web Content Article View */
+        .article-view {
+            width: 100%;
+            max-width: 920px;
+            margin: 0 auto;
+            background-color: #ffffff;
+            padding: 40px;
+            border-radius: 8px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.08);
+            line-height: 1.6;
+            color: #1e293b;
+        }
+
+        .article-view h2 {
+            color: var(--primary-color);
+            border-bottom: 2px solid #e2e8f0;
+            padding-bottom: 8px;
+            margin-bottom: 20px;
+            font-size: 1.6rem;
+        }
+
+        .article-view h3 {
+            color: #334155;
+            margin-top: 25px;
+            margin-bottom: 12px;
+            font-size: 1.2rem;
+        }
+
+        .article-view h4 {
+            color: #475569;
+            margin-top: 15px;
+            margin-bottom: 8px;
+            font-size: 1.05rem;
+        }
+
+        .article-view p {
+            margin-bottom: 15px;
+        }
+
+        .article-view ul, .article-view ol {
+            margin-bottom: 20px;
+            padding-left: 25px;
+        }
+
+        .article-view li {
+            margin-bottom: 8px;
+        }
+
+        .article-view table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 20px 0;
+        }
+
+        .article-view th, .article-view td {
+            border: 1px solid #cbd5e1;
+            padding: 10px 14px;
+            text-align: left;
+        }
+
+        .article-view th {
+            background-color: #f1f5f9;
+            color: #0f172a;
+            font-weight: 600;
+        }
+
+        .article-view .callout {
+            background-color: #f0f9ff;
+            border-left: 4px solid var(--primary-color);
+            padding: 15px 20px;
+            margin: 20px 0;
+            border-radius: 0 6px 6px 0;
+        }
+
+        .article-view code {
+            background-color: #f1f5f9;
+            padding: 2px 6px;
+            border-radius: 4px;
+            font-family: monospace;
+        }
+
+        /* Interactive Cross-Reference Hyperlinks */
+        .sop-inline-link {
+            color: var(--primary-color);
+            text-decoration: underline;
+            font-weight: 600;
+            cursor: pointer;
+            padding: 1px 4px;
+            border-radius: 3px;
+            transition: all 0.2s ease;
+        }
+
+        .sop-inline-link:hover {
+            color: #ffffff;
+            background-color: var(--primary-color);
+            text-decoration: none;
+        }
+
+        /* Navigation Bar Controls (Top and Bottom) */
+        .section-nav-bar {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 12px 16px;
+            background-color: #f8fafc;
+            border: 1px solid #e2e8f0;
+            border-radius: 6px;
+            margin-bottom: 25px;
+        }
+
+        .section-nav-bar.bottom {
+            margin-top: 35px;
+            margin-bottom: 0;
+        }
+
+        .nav-btn {
+            background-color: #ffffff;
+            border: 1px solid #cbd5e1;
+            color: #334155;
+            padding: 8px 14px;
+            border-radius: 5px;
+            font-size: 0.88rem;
+            font-weight: 600;
+            cursor: pointer;
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            transition: all 0.2s ease;
+        }
+
+        .nav-btn:hover:not(:disabled) {
+            background-color: var(--primary-color);
+            color: #ffffff;
+            border-color: var(--primary-color);
+        }
+
+        .nav-btn:disabled {
+            opacity: 0.4;
+            cursor: not-allowed;
+            border-color: #e2e8f0;
+        }
+
+        .empty-state {
+            text-align: center;
+            margin-top: 20%;
+            color: #777;
+            width: 100%;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="sidebar" id="sidebar">
+        <div class="sidebar-header">
+            <h2>Workflow Directory</h2>
+        </div>
+        <div class="search-container">
+            <input type="text" id="searchInput" class="search-input" placeholder="Search workflows or SOPs..." onkeyup="filterWorkflows()">
+        </div>
+        <div class="category-container" id="categoryContainer">
+            <div id="noResults" class="no-results">No relevant content found.</div>
+        </div>
+    </div>
+
+    <div class="main-content">
+        <div class="toolbar">
+            <div class="toolbar-left">
+                <button class="toggle-btn" onclick="toggleSidebar()" title="Toggle Menu">☰</button>
+                <h1 id="currentWorkflowTitle">Select a section</h1>
+            </div>
+            <div class="controls" id="zoomControls">
+                <button onclick="zoomOut()">➖ Zoom Out</button>
+                <button onclick="resetZoom()">🔄 Reset</button>
+                <button onclick="zoomIn()">➕ Zoom In</button>
+            </div>
+        </div>
+        <div class="viewer-container" id="viewerContainer">
+            <div class="empty-state" id="emptyState">
+                <h3>Please select a document or workflow section from the menu.</h3>
+            </div>
+            <div class="article-view" id="articleView" style="display: none;"></div>
+            <div class="canvas" id="canvas" style="display: none;">
+                <img id="workflowImage" src="" alt="Flowchart" onerror="this.onerror=null; this.src='https://via.placeholder.com/800x600.png?text=Image+Not+Found';">
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const workflowData = [
+            {
+                categoryId: 'cat-sop-master',
+                categoryName: 'SOP Process Master',
+                isOpen: true, 
+                workflows: [
+                    {
+                        id: 'sop-intro',
+                        title: 'Introduction',
+                        label: 'Overview & Purpose',
+                        level: 1,
+                        type: 'web',
+                        content: `
+                            <h2>Introduction</h2>
+                            <div class="callout">
+                                <strong>Department Responsible:</strong> Customer Service Operations | Center for Customer Service Excellence
+                            </div>
+                            <p>The primary purpose of the Customer Service Department is to perform all support functions in a repeatable and reliable way, transitioning from haphazard methods to a standardized <strong>"One Best Way"</strong> for every interaction.</p>
+                            <p>By codifying these procedures, we ensure consistency across all service channels and provide the stable baseline necessary for continuous improvement. This SOP is designed to optimize three critical areas of performance:</p>
+                            <ul>
+                                <li><strong>Efficiency:</strong> Streamlining workflows to deliver results using the fewest resources and eliminating non-value-adding waste.</li>
+                                <li><strong>Quality:</strong> Ensuring consistent "first-time right" execution that meets or exceeds customer requirements regardless of which agent is on duty.</li>
+                                <li><strong>Safety:</strong> Minimizing financial, reputational, and operational risks to both the organization and its clients.</li>
+                            </ul>
+                            <p>Our customers primarily include active account holders, incoming callers, online chat participants, corporate partners, and internal stakeholders requiring structured support navigation.</p>
+                        `
+                    },
+                    {
+                        id: 'sop-sec1',
+                        title: 'Section 1: Customer Satisfaction Codes of Conduct (ISO 10001)',
+                        label: 'ISO 10001 Governance Master',
+                        level: 1,
+                        type: 'web',
+                        content: `
+                            <h2>Section 1: Customer Satisfaction Codes of Conduct (ISO 10001)</h2>
+                            <div class="callout">
+                                <strong>Compliance Standard:</strong> Aligned with ISO 10001:2018 Quality Management — Customer Satisfaction — Guidelines for codes of conduct for organizations.
+                            </div>
+                            <p>This master section governs our public and operational commitments to customer service excellence across all delivery channels. Select any of the sub-sections on the left navigation directory (<strong>1.1 Purpose and Scope</strong> through <strong>1.5 Internal & External Communication Plan</strong>) to examine our verbatim standard operating procedures.</p>
+                        `
+                    },
+                    {
+                        id: 'sop-1-1',
+                        title: '1.1 Purpose and Scope',
+                        label: 'Purpose & Scope',
+                        level: 2,
+                        type: 'web',
+                        content: `
+                            <h2>1.1 Purpose and Scope</h2>
+                            
+                            <h3>1.1.1. Purpose</h3>
+                            <p>The primary goal of this Standard Operating Procedure (SOP) is to transition the Customer Service Department from haphazard, individual methods to a standardized <strong>"One Best Way"</strong> for every interaction. By codifying these procedures, we ensure that routine activities are performed in a repeatable and reliable way, providing the stable baseline necessary for continuous improvement.</p>
+                            <p>This document is designed to optimize three watchwords of performance:</p>
+                            <ul>
+                                <li><strong>Efficiency:</strong> Streamlining workflows to deliver results using the fewest resources and eliminating non-value-adding waste.</li>
+                                <li><strong>Quality:</strong> Ensuring consistent "first-time right" execution that meets or exceeds customer requirements regardless of which agent is on duty.</li>
+                                <li><strong>Safety:</strong> Minimizing financial, reputational, and operational risks to both the organization and its clients.</li>
+                            </ul>
+                            <p>Furthermore, this SOP integrates the four pillars of the ISO 10000 series, governing our service promises (ISO 10001), internal mechanics for resolving dissatisfaction (ISO 10002), criteria for external dispute referral (ISO 10003), and the data-driven measurement of customer satisfaction (ISO 10004).</p>
+
+                            <h3>1.1.2. Scope</h3>
+                            <p>This SOP identifies the boundaries of responsibility and the specific activities covered by this management system.</p>
+                            <ul>
+                                <li><strong>Target Audience:</strong> This procedure is written for all frontline Customer Service Representatives, Team Leaders, and Operations Managers. It serves as the primary training material for new hires and a ready reference for experienced staff.</li>
+                                <li><strong>Applicability:</strong> The protocols defined herein apply to the entire end-to-end customer journey—from initial intake to closure—across all approved contact channels, including Phone, Email, Chat, and In-Person interactions.</li>
+                                <li><strong>Operational Boundaries:</strong> This document governs:
+                                    <ul style="margin-top: 5px; margin-bottom: 5px;">
+                                        <li>Standard work for inquiry logging, identity verification, and triage.</li>
+                                        <li>Internal escalation protocols and resolution timeframes.</li>
+                                        <li>Systemic monitoring activities, including the calculation of the Customer Satisfaction Index (CSI).</li>
+                                    </ul>
+                                </li>
+                                <li><strong>Exclusions:</strong> This SOP does not cover employment-related disputes, internal HR policies, or specialized technical manufacturing specifications, which are maintained in separate manuals.</li>
+                            </ul>
+                        `
+                    },
+                    {
+                        id: 'sop-1-2',
+                        title: '1.2 Staff Responsibilities',
+                        label: 'Staff Responsibilities',
+                        level: 2,
+                        type: 'web',
+                        content: `
+                            <h2>1.2 Staff Responsibilities</h2>
+
+                            <h3>1.2.1. Stewards of the Customer Journey</h3>
+                            <p>The primary responsibility of every Customer Service Representative is to serve as a steward (caretaker) of the customer journey, ensuring that every interaction is performed in a repeatable and reliable way according to the established "One Best Way". By clearly defining these roles, we eliminate the confusion of ad-hoc methods and ensure every team member understands their specific contribution to the organization’s goals.</p>
+
+                            <h3>1.2.2. Operational Discipline and Execution</h3>
+                            <ul>
+                                <li><strong>Adherence to Standards:</strong> Staff are responsible for following Standard Operating Procedures (SOPs) step-by-step to ensure consistent results in efficiency, quality, and safety.</li>
+                                <li><strong>Point-of-Contact Logging:</strong> Every inquiry must be logged immediately and accurately in the CRM system to make "the invisible visible" and prevent reliance on memory or unorganized "post-it notes".</li>
+                                <li><strong>First-Time Right Resolution:</strong> Staff must strive for "first-time right" execution, minimizing the need for costly rework, re-checking data, or requiring the customer to follow up.</li>
+                            </ul>
+
+                            <h3>1.2.3. Ownership and Advisory Role</h3>
+                            <ul>
+                                <li><strong>End-to-End Ownership:</strong> Agents are empowered to take full ownership of a solution from initial contact to final validation, reducing the number of internal hand-offs that can frustrate customers.</li>
+                                <li><strong>Product-Based Solutions:</strong> Beyond providing basic answers, staff should act as advisers, identifying and presenting broader solutions that educate the customer on how the organization can meet their evolving needs.</li>
+                                <li><strong>Empathetic Communication:</strong> Staff must maintain a professional and empathetic tone, ensuring customers feel heard and appreciated even during difficult interactions.</li>
+                            </ul>
+
+                            <h3>1.2.4. Continuous Improvement and Problem Solving</h3>
+                            <ul>
+                                <li><strong>Problem Identification:</strong> It is part of every staff member's job description to identify "sand"—recurring issues that disrupt daily work—and treat them as "gold nuggets" for improvement.</li>
+                                <li><strong>Active Participation in Huddles:</strong> Staff must attend daily morning huddles to review performance, raise roadblocks, and engage in root-cause problem solving using tools like the "5 Whys".</li>
+                                <li><strong>Innovation Contribution:</strong> Because those closest to the work know it best, staff are expected to suggest revisions to the SOP whenever a more efficient or safer method is discovered.</li>
+                            </ul>
+
+                            <h3>1.2.5. Professional Development and Collaboration</h3>
+                            <ul>
+                                <li><strong>Skill Mastery:</strong> Team members are responsible for their own development, participating in cross-training to increase the department’s flexibility in meeting surges in demand.</li>
+                                <li><strong>Maintaining Workspace Standards:</strong> Following the <em>5S system</em>, staff must maintain a clean and well-organized workplace to support efficient operations.</li>
+                            </ul>
+
+                            <h3>1.2.6. Performance Targets & Accountability</h3>
+                            <p>To ensure these responsibilities are met, staff performance is measured against the following key indicators:</p>
+                            <table>
+                                <thead>
+                                    <tr>
+                                        <th>Category</th>
+                                        <th>Performance Indicator</th>
+                                        <th>Target Metric</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr>
+                                        <td><strong>Timeliness (SLA)</strong></td>
+                                        <td>Critical Inquiry Acknowledgment</td>
+                                        <td>Within 30 minutes</td>
+                                    </tr>
+                                    <tr>
+                                        <td><strong>Timeliness (SLA)</strong></td>
+                                        <td>High Priority Resolution</td>
+                                        <td>Within the same business day</td>
+                                    </tr>
+                                    <tr>
+                                        <td><strong>Quality</strong></td>
+                                        <td>First-Time Right (FTR) Rate</td>
+                                        <td>&gt;90% of cases resolved without rework</td>
+                                    </tr>
+                                    <tr>
+                                        <td><strong>Sentiment</strong></td>
+                                        <td>Customer Satisfaction Index (CSI)</td>
+                                        <td>Score of 85+ on the 100-point scale</td>
+                                    </tr>
+                                    <tr>
+                                        <td><strong>Discipline</strong></td>
+                                        <td>Inquiry Logging Accuracy</td>
+                                        <td>100% capture at point of contact; 0 failed mandatory fields</td>
+                                    </tr>
+                                    <tr>
+                                        <td><strong>Improvement</strong></td>
+                                        <td>Gold Nugget Contributions</td>
+                                        <td>1 per agent per month identified for root-cause review</td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        `
+                    },
+                    {
+                        id: 'sop-1-3',
+                        title: '1.3 Operating Hours & Contact Channels',
+                        label: 'Hours & Channels',
+                        level: 2,
+                        type: 'web',
+                        content: `
+                            <h2>1.3 Operating Hours & Contact Channels</h2>
+
+                            <h3>1.3.1. Operating Hours</h3>
+                            <p>To maintain a stable foundation of consistency and reliability, our department operates within defined timeframes that align with our commitment to <strong>“valuing the customer’s time”</strong>. By standardizing these hours, we ensure our staff is available to provide a “first-time right” resolution when customers need it most.</p>
+                            
+                            <h4>Standard Operating Hours</h4>
+                            <p>Our primary service channels (Phone, Live Chat, and In-Person) are available during the following windows:</p>
+                            <ul>
+                                <li><strong>Monday to Friday:</strong> 8:00 AM – 6:00 PM [Local Time].</li>
+                                <li><strong>Saturday:</strong> 9:00 AM – 1:00 PM [Local Time].</li>
+                                <li><strong>Sunday & Public Holidays:</strong> Closed (Self-service options available).</li>
+                            </ul>
+
+                            <h4>Extended and Emergency Coverage</h4>
+                            <p>Recognizing that urgent needs arise outside rigid schedules, we maintain the following exception protocols:</p>
+                            <ul>
+                                <li><strong>Critical Issue Support:</strong> For issues categorized as "Critical" in the Priority Matrix, we provide 24/7 coverage. These tickets must be acknowledged within 30 minutes, regardless of the hour.</li>
+                                <li><strong>Urgent Needs Flexibility:</strong> Following our principle of <em>emotional awareness</em>, staff are empowered to assist customers with truly urgent needs (e.g., financial crises) shortly after standard closing hours if the situation warrants an empathetic exception.</li>
+                                <li><strong>Digital Self-Service:</strong> Automated systems, including the Interactive Voice Response (IVR) and web forms, remain active 24/7 for routine inquiries and reflexive intake.</li>
+                            </ul>
+
+                            <h4>Customer Notification Protocols</h4>
+                            <p>To ensure an effortless journey, availability is communicated through:</p>
+                            <ul>
+                                <li><strong>Website & Social Media:</strong> Real-time updates for holiday closures and standard hours.</li>
+                                <li><strong>Automated Acknowledgments:</strong> Every digital inquiry receives an automated confirmation specifying the expected response timeframe based on priority.</li>
+                                <li><strong>Out-of-Hours Messaging:</strong> Phone and chat systems utilize standard scripts to provide a specific date and time for the next status update.</li>
+                            </ul>
+
+                            <h3>1.3.2. Approved Contact Channels</h3>
+                            <p>We provide multiple pathways to ensure every interaction is simple, clear, and personal, recognizing that each touchpoint is part of a continuous end-to-end journey.</p>
+                            <ul>
+                                <li><strong>Phone:</strong> Our primary channel for real-time support. We utilize an IVR system for common self-service tasks to reduce agent-assisted volume and prioritize complex inquiries.</li>
+                                <li><strong>Email:</strong> Essential for inquiries requiring detailed documentation. This channel provides customers with written acknowledgments and unique Case Numbers for their records.</li>
+                                <li><strong>Live Chat:</strong> Offers a real-time digital option for swift resolution of FAQs and technical troubleshooting directly on our website.</li>
+                                <li><strong>In-Person:</strong> Face-to-face support at our service centers, where all staff (including security) are trained in emotional awareness to ensure customers feel heard.</li>
+                                <li><strong>Web Forms:</strong> Standardized forms for the reflexive intake of claims and applications. We make this journey effortless by pre-filling forms with existing data and requiring only minimal information for verification.</li>
+                                <li><strong>Social Media:</strong> Utilized as a vital “listening post” to identify emerging issues. Feedback gathered here is treated as a "gold nugget" for continuous process improvement.</li>
+                            </ul>
+                        `
+                    },
+                    {
+                        id: 'sop-1-4',
+                        title: '1.4 Service Promises & Remedies',
+                        label: 'Promises & Remedies',
+                        level: 2,
+                        type: 'web',
+                        content: `
+                            <h2>1.4 Service Promises & Remedies</h2>
+
+                            <h3>1.4.1. Our Service Promises</h3>
+                            <p>In our pursuit of the "One Best Way," we make the following foundational promises to every customer. These commitments are designed to ensure an effortless journey and foster a lasting emotional connection.</p>
+                            <ul>
+                                <li><strong>The Promise of Timeliness:</strong> We promise to acknowledge every inquiry according to its priority level, with Critical issues receiving a response within 30 minutes, 24/7.</li>
+                                <li><strong>The Promise of First-Time Right (FTR):</strong> We strive to resolve every inquiry correctly the first time to eliminate the waste of rework and the burden of customer follow-up.</li>
+                                <li><strong>The Promise of End-to-End Ownership:</strong> We promise that the agent who receives your inquiry will take full ownership of the solution, minimizing "specialist hand-offs" that frustrate customers.</li>
+                                <li><strong>The Promise of Transparency:</strong> We promise to provide a Unique Case Number for every inquiry and a specific date for any required status updates.</li>
+                            </ul>
+
+                            <h3>1.4.2. Remedies for Non-Fulfillment</h3>
+                            <p>Following ISO 10001 and ISO 10002 guidelines, we provide the following remedies if our service promises are not met. These actions are intended to restore customer trust and treat every failure as a "gold nugget" for systemic improvement.</p>
+                            <table>
+                                <thead>
+                                    <tr>
+                                        <th>If we fail to meet...</th>
+                                        <th>Our Immediate Remedy will be...</th>
+                                        <th>Our Improvement Action will be...</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr>
+                                        <td><strong>Timeliness SLA</strong><br><small>(e.g., Critical &gt;30 mins)</small></td>
+                                        <td>Immediate formal apology and priority escalation to a Senior Operations Manager.</td>
+                                        <td>Trigger a "5 Whys" root-cause analysis at the next Morning Huddle to identify capacity blockages.</td>
+                                    </tr>
+                                    <tr>
+                                        <td><strong>First-Time Right</strong><br><small>(e.g., Repeat complaint)</small></td>
+                                        <td>Referral to a licensed specialist and a [Goodwill Token/Service Credit] as a gesture of accountability.</td>
+                                        <td>Record the incident as a "recurring gold nugget" to determine if a Poka-Yoke (mistake-proofing) control is needed in the SOP.</td>
+                                    </tr>
+                                    <tr>
+                                        <td><strong>Transparency</strong><br><small>(e.g., Missed status date)</small></td>
+                                        <td>A personal phone call from a Team Leader within 2 hours to provide a verified update.</td>
+                                        <td>Review the Visual Management Board to determine why the "expected vs. actual" dwell time was missed.</td>
+                                    </tr>
+                                </tbody>
+                            </table>
+
+                            <h3>1.4.3. Limitations on Promises</h3>
+                            <p>To ensure our code of conduct remains accurate and not misleading, the following limitations apply:</p>
+                            <ul>
+                                <li><strong>Force Majeure:</strong> Promises regarding timeliness may be suspended during extreme weather, major utility outages, or national emergencies that disrupt standard operations.</li>
+                                <li><strong>Accuracy of Information:</strong> Our ability to fulfill these promises depends on the customer providing accurate identification and contact details at the start of the journey.</li>
+                                <li><strong>Third-Party Dependencies:</strong> While we assume end-to-end ownership, certain technical resolutions may be subject to the maintenance windows of external software providers.</li>
+                            </ul>
+                        `
+                    },
+                    {
+                        id: 'sop-1-5',
+                        title: '1.5 Internal & External Communication Plan',
+                        label: 'Communication Plan',
+                        level: 2,
+                        type: 'web',
+                        content: `
+                            <h2>1.5 Internal & External Communication Plan</h2>
+
+                            <h3>1.5.1. Plan Objectives</h3>
+                            <p>The primary goal of this communication plan is to ensure that our Service Promises and Remedies (defined in Section 1.4) are accessible, transparent, and verifiable. By establishing clear channels of information, we move from "hidden standards" to a culture of radical transparency where every stakeholder knows exactly what to expect from our department.</p>
+
+                            <h3>1.5.2. Internal Communication (To Staff)</h3>
+                            <p>To ensure our "One Best Way" is part of the company's DNA and not performed "mechanically," we utilize the following internal routines:</p>
+                            <ul>
+                                <li><strong>The "Why" Behind the Standard:</strong> Managers must communicate not just the what (the procedure) but the why (the impact on the customer) to deepen the team's emotional investment.</li>
+                                <li><strong>Daily Morning Huddles:</strong> These are the primary vehicles for cascading information. Each huddle should include a brief review of a specific SOP "Gold Nugget" to reinforce mastery.</li>
+                                <li><strong>The Listening Team:</strong> A cross-functional group of up to 12 members (from senior leaders to frontline staff) will meet every two weeks to monitor if communication is getting through and address any staff concerns or resistance early.</li>
+                                <li><strong>Leader Role-Modeling:</strong> Senior management will demonstrate commitment by conducting <em>Gemba Walks / Leader Standard Work (LSW)</em>, signing performance boards to prove they are "present in the process".</li>
+                            </ul>
+
+                            <h3>1.5.3. External Communication (To Customers)</h3>
+                            <p>We make our commitments visible to our customers to ensure an effortless journey and manage their expectations effectively:</p>
+                            <ul>
+                                <li><strong>Service Promise Visibility:</strong> Our core promises (Timeliness, FTR, Ownership) and the available remedies will be published on the company website, brochures, and in automated email footers.</li>
+                                <li><strong>Inquiry Guidance:</strong> We will provide clear, jargon-free instructions on how and where to make inquiries, ensuring these formats are accessible to all customer segments, including those with different abilities.</li>
+                                <li><strong>Automated Status Updates:</strong> To provide transparency and peace of mind, our systems will automatically communicate a Unique Case Number and a specific date for the next status update via the customer’s preferred channel.</li>
+                                <li><strong>Remedy Awareness:</strong> If a promise is not fulfilled, the customer will be immediately informed of their right to a remedy (e.g., service credit) and the steps they need to take to claim it.</li>
+                            </ul>
+
+                            <h3>1.5.4. Review and Feedback Loop</h3>
+                            <ul>
+                                <li><strong>Communication Effectiveness Audit:</strong> On a quarterly basis, the Listening Team will evaluate if our communication methods (e.g., logos, email templates) are accurate and not misleading.</li>
+                                <li><strong>Customer Feedback Integration:</strong> Findings from the ISO 10004 Feedback Surveys will be used to adjust the communication plan if customers report that our promises are difficult to find or understand.</li>
+                            </ul>
+                        `
+                    },
+                    {
+                        id: 'sop-sec2',
+                        title: 'Section 2: Internal Complaints Handling Process (ISO 10002)',
+                        label: 'ISO 10002 Governance Master',
+                        level: 1,
+                        type: 'web',
+                        content: `
+                            <h2>Section 2: Internal Complaints Handling Process (ISO 10002)</h2>
+                            <div class="callout">
+                                <strong>Compliance Standard:</strong> Aligned with ISO 10002 Quality Management — Customer Satisfaction — Guidelines for complaints handling in organizations.
+                            </div>
+                            <p>This master section governs our core customer service procedures, system infrastructure, triage priority matrices, investigative protocols, and internal multi-tiered escalation pathways. Select any of the sub-sections on the left navigation directory (<strong>2.1 Customer Service System</strong> through <strong>2.9 Internal Escalation Procedure</strong>) to examine our verbatim standard operating procedures.</p>
+                        `
+                    },
+                    {
+                        id: 'sop-2-1',
+                        title: '2.1 Customer Service System',
+                        label: 'Infrastructure & Routines',
+                        level: 2,
+                        type: 'web',
+                        content: `
+                            <h2>2.1 Customer Service System</h2>
+
+                            <h3>2.1.1. System Infrastructure</h3>
+                            <p>Our department utilizes an integrated suite of tools designed to eliminate the waste of fragmented data and ensure a stable baseline for performance.</p>
+                            <ul>
+                                <li><strong>Centralized CRM and Ticketing:</strong> All interactions are managed through a unified Customer Relationship Management (CRM) system. This serves as the "single source of truth," ensuring any agent can view a customer's entire history without requiring them to repeat information.
+                                    <ul style="margin-top: 5px; margin-bottom: 5px;">
+                                        <li><em>Mistake-Proofing (Poka-Yoke):</em> The CRM includes controls that disable the "Submit" or "Close" functions until mandatory fields (e.g., priority, root cause, contact info) are correctly populated.</li>
+                                    </ul>
+                                </li>
+                                <li><strong>Visual Management System (Huddle Boards):</strong> Physical or digital performance boards are used to “make the invisible visible”. These boards track real-time metrics such as inquiry volume and resolution rates. Red and green status indicators alert the team if a process is drifting from the standard, triggering immediate root-cause analysis.</li>
+                                <li><strong>Knowledge Base and Standard Work Guides:</strong> All staff have instant access to a searchable digital repository of "One Best Way" guides. This ensures training remains consistent and eliminates reliance on "post-it notes" or individual guesswork.</li>
+                                <li><strong>Self-Service and Automated Tools:</strong> To value the customer’s time, we integrate an Interactive Voice Response (IVR) system and reflexive web forms to handle "regular" work (e.g., ID verification), allowing agents to focus on complex "irregular" work that requires empathy.</li>
+                            </ul>
+
+                            <h3>2.1.2. Organizational Routines (Tiered Accountability)</h3>
+                            <p>System stability is maintained through a structured cycle of communication and review:</p>
+                            <ul>
+                                <li><strong>Tier 1 Daily Huddles:</strong> A 15-minute standing meeting at the start of each shift where teams review the previous day’s performance, identify immediate roadblocks (the "sand"), and balance capacity.</li>
+                                <li><strong>Tier 2/3 Escalation:</strong> Issues that cannot be resolved at the team level are escalated to higher-tier huddle boards to ensure leadership expertise is applied where it is most needed.</li>
+                            </ul>
+
+                            <h3>2.1.3. What the Customer Can Expect</h3>
+                            <p>To provide peace of mind and transparency, every journey managed through this system follows a standardized lifecycle:</p>
+                            <ul>
+                                <li><strong>Acknowledgement:</strong> Upon submission, customers receive an automated confirmation containing a Unique Case Number and a specific timeframe for a personal response.</li>
+                                <li><strong>Tracking:</strong> Every case is logged at the point of contact; customers can use their Case Number to receive real-time status updates through any channel.</li>
+                                <li><strong>Progress Updates:</strong> For complex issues, agents must provide a specific date and time for the next status report to ensure the journey remains effortless.</li>
+                                <li><strong>Validation and Closure:</strong> A case is only marked "Closed" in the CRM after the agent validates with the customer that the issue is fully resolved to their satisfaction.</li>
+                                <li><strong>Re-Opening/Escalation:</strong> If a resolution is unsatisfactory, the customer is informed of their right to internal escalation (to a Team Leader) or external referral (Section 3), ensuring a continuous path for redress.</li>
+                            </ul>
+                        `
+                    },
+                    {
+                        id: 'sop-2-2',
+                        title: '2.2 Standard Workflow',
+                        label: 'Step-by-Step Execution',
+                        level: 2,
+                        type: 'web',
+                        content: `
+                            <h2>2.2 Standard Workflow</h2>
+                            <p>The goal of this workflow is to ensure every customer inquiry is resolved in a consistent, efficient, and safe manner. Each step is designed to "value the customer’s time" by aiming for a “first-time right” resolution.</p>
+
+                            <h3>2.2.1. Visual Map: The End-To-End Journey</h3>
+                            <p>For a high-level overview, all staff should refer to the Customer Service Flowchart (Section 2.3), which visualizes these steps and highlights key decision points.</p>
+
+                            <h3>2.2.2. Step-by-Step Procedural Instructions</h3>
+                            
+                            <h4>Step 1: Initial Contact & Identification</h4>
+                            <ul>
+                                <li><strong>Receive Inquiry:</strong> Accept interactions through any approved Contact Channel (Phone, Email, Chat, Web Form).</li>
+                                <li><strong>Verify Identity:</strong> Use the simplified protocol—requesting only the customer’s Full Name and the last 4 digits of their ID/Account Number—to keep the journey effortless.</li>
+                            </ul>
+
+                            <h4>Step 2: Inquiry Logging & Acknowledgment</h4>
+                            <ul>
+                                <li><strong>Create Digital Record:</strong> Open a case in the CRM immediately at the point of contact to make the interaction "visible" and eliminate reliance on unorganized notes.</li>
+                                <li><strong>Follow Logging Protocol:</strong> Adhere to the mandatory fields defined in Section 2.4 (Inquiry Logging Method) to ensure data integrity.</li>
+                                <li><strong>Provide Case Number:</strong> Give the customer their Unique Case Number and an automated written acknowledgment specifying the expected resolution timeframe.</li>
+                            </ul>
+
+                            <h4>Step 3: Triage & Prioritization</h4>
+                            <ul>
+                                <li><strong>Categorize:</strong> Select the appropriate category (e.g., Billing, Tech Support, General Info) to facilitate routing.</li>
+                                <li><strong>Prioritize:</strong> Apply the Priority Matrix (Section 2.5) to determine the severity level (Critical, High, Medium, or Normal/Minor).</li>
+                                <li><strong>Immediate Escalation:</strong> If an issue is marked "Critical," follow the manager-notification trigger immediately.</li>
+                            </ul>
+
+                            <h4>Step 4: Routing & Ownership</h4>
+                            <ul>
+                                <li><strong>Assign Agent:</strong> Route the inquiry to the appropriate generalist or specialist based on the Skills Matrix.</li>
+                                <li><strong>Assume Ownership:</strong> The assigned agent takes full end-to-end ownership of the solution, minimizing the "specialist hand-off" waste that typically frustrates customers.</li>
+                            </ul>
+
+                            <h4>Step 5: Resolution Process</h4>
+                            <ul>
+                                <li><strong>Execute "One Best Way":</strong> Follow the specific category-based "How-To" SOP from the Knowledge Base.</li>
+                                <li><strong>Apply Poka-Yoke:</strong> Perform mandatory Mistake-Proofing checks (e.g., data verification) before finalization to ensure the resolution is correct the first time.</li>
+                                <li><strong>Provide Product-Based Solutions:</strong> Rather than just answering the immediate question, seek to provide broader solutions that add value to the customer’s end-to-end journey. If a direct "yes" is not possible due to policy, frame the conversation with alternatives so the customer feels heard and supported.</li>
+                            </ul>
+
+                            <h4>Step 6: Validation & Closure</h4>
+                            <ul>
+                                <li><strong>Confirm Satisfaction:</strong> Explicitly validate with the customer that their issue is fully resolved to their satisfaction before closing the record.</li>
+                                <li><strong>Trigger Feedback:</strong> Mark the case as "Closed" in the CRM, which automatically sends the Customer Satisfaction Survey (Section 4.2).</li>
+                            </ul>
+
+                            <h4>Step 7: Exception Handling & Improvement</h4>
+                            <ul>
+                                <li><strong>Manage the "Sand":</strong> If an inquiry cannot be resolved, record the obstacle on the Daily Tracking Sheet.</li>
+                                <li><strong>Root-Cause Review:</strong> Bring these "gold nuggets" to the next Morning Huddle for "5 Whys" problem solving.</li>
+                            </ul>
+                        `
+                    },
+                    {
+                        id: 'sop-2-3',
+                        title: '2.3 Flowchart',
+                        label: 'Process Map Reference',
+                        level: 2,
+                        type: 'web',
+                        content: `
+                            <h2>2.3 Customer Service Flowchart</h2>
+                            <div class="callout">
+                                <strong>Visual Mapping Tool:</strong> Highlights decision gates, verification pathways, triage splits, and escalation channels across the end-to-end service workflow.
+                            </div>
+                            <p>Use the flowchart to visually map how cases move through initial intake, CRM logging, identity verification, Priority Matrix triage, Tier 1–3 escalations, and validated closure.</p>
+                        `
+                    },
+                    {
+                        id: 'sop-2-4',
+                        title: '2.4 Inquiry Logging Method',
+                        label: 'CRM Logging Protocol',
+                        level: 2,
+                        type: 'web',
+                        content: `
+                            <h2>2.4 Inquiry Logging Method</h2>
+
+                            <h3>2.4.1. Protocol Objective</h3>
+                            <p>The goal of this protocol is to ensure data integrity and radical transparency. By standardizing how inquiries are logged, we ensure that any agent can view a customer's end-to-end journey without requiring the customer to repeat information, thereby "valuing the customer’s time".</p>
+
+                            <h3>2.4.2. Point-of-Contact Execution</h3>
+                            <ul>
+                                <li><strong>Immediate Record Creation:</strong> Open a new case in the CRM system as soon as a customer initiates contact (Phone, Chat, or In-Person). Do not utilize "post-it notes" or secondary notebooks.</li>
+                                <li><strong>Unique Identifier:</strong> The system must automatically generate a Unique Case Number for every log. This number serves as the customer's reference for all future status updates.</li>
+                                <li><strong>Verification Compliance:</strong> Ensure the simplified identity verification (Full Name + last 4 digits of ID) is completed and noted before proceeding with the case details.</li>
+                            </ul>
+
+                            <h3>2.4.3. Mandatory Data Fields (ISO 10002 Requirements)</h3>
+                            <p>To comply with international standards, every log must contain the following specific elements:</p>
+                            <ul>
+                                <li><strong>Issue Description:</strong> A brief, factual summary of the inquiry or complaint.</li>
+                                <li><strong>Product/Service Category:</strong> Selection from the standardized dropdown menu (e.g., Billing, Technical Support) to facilitate routing.</li>
+                                <li><strong>Remedy Sought:</strong> Explicitly record what the customer wants as a resolution (e.g., refund, repair, information).</li>
+                                <li><strong>Due Date:</strong> The target resolution date based on the Response and Resolution Timeframes (Section 2.8).</li>
+                                <li><strong>Immediate Action Taken:</strong> Documentation of any on-the-spot solutions or triage steps performed during the initial contact.</li>
+                            </ul>
+
+                            <h3>2.4.4. Mistake-Proofing (Poka-Yoke) Controls</h3>
+                            <ul>
+                                <li><strong>Control Mechanism:</strong> The "Save" and "Submit" functions remain disabled until all mandatory fields (Email, Category, and Priority) are correctly populated.</li>
+                                <li><strong>Writing Style:</strong> Documentation must be "No Fluff"—prioritizing short, precise sentences that focus on the root cause to aid downstream agents who may handle the case.</li>
+                            </ul>
+
+                            <h3>2.4.5. Exception Logging</h3>
+                            <p>If an inquiry cannot be resolved at the point of contact or falls outside documented policy, it must be recorded on the Daily Tracking Sheet. These entries are treated as "gold nuggets" and must be brought to the next Morning Huddle for root-cause review and potential SOP revision.</p>
+                        `
+                    },
+                    {
+                        id: 'sop-2-5',
+                        title: '2.5 Priority Matrix',
+                        label: 'Priority Matrix & Triage',
+                        level: 2,
+                        type: 'web',
+                        content: `
+                            <h2>2.5 Priority Matrix</h2>
+
+                            <h3>2.5.1. Objective</h3>
+                            <p>The primary goal of the Priority Matrix is to standardize the triage process, ensuring that customer inquiries are handled according to their business impact and severity. This systematic categorization allows the department to perform load balancing, moving resources dynamically to address high-risk issues before they escalate.</p>
+
+                            <h3>2.5.2. Priority Matrix Levels</h3>
+                            <p>Staff must use the following criteria to categorize every logged inquiry during Step 3 of the Standardized Customer Service Workflow (Section 2.2):</p>
+                            <table>
+                                <thead>
+                                    <tr>
+                                        <th>Priority Level</th>
+                                        <th>Description and Impact Criteria</th>
+                                        <th>Internal Action Trigger</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr>
+                                        <td><strong>Critical</strong></td>
+                                        <td>Urgent issues that severely impact the customer relationship or business operations (e.g., government regulation & compliance issues, major service failures, unauthorized account access, safety concerns, or repeated unresolved complaints).</td>
+                                        <td>Immediate Escalation to Operations Manager; Acknowledgment within 30 minutes.</td>
+                                    </tr>
+                                    <tr>
+                                        <td><strong>High</strong></td>
+                                        <td>Significant issues affecting multiple customers or causing strong dissatisfaction (e.g., financial loss to the company without government compliance impact, billing errors, incorrect shipments, or localized service disruptions).</td>
+                                        <td>Resolved within the same business day; Acknowledgment within 1 hour.</td>
+                                    </tr>
+                                    <tr>
+                                        <td><strong>Medium</strong></td>
+                                        <td>Routine inquiries or complaints that impact service quality or disrupt business operations on some part or as a whole, but do not involve direct company financial loss (e.g., general product issues or delayed responses to non-critical tasks).</td>
+                                        <td>Target resolution within 2–3 business days; Acknowledgment within 1 hour.</td>
+                                    </tr>
+                                    <tr>
+                                        <td><strong>Minor</strong></td>
+                                        <td>General requests or trivial issues that lead to minimal interruption of a business process without disrupting business entities (e.g., FAQs, address updates, or small account adjustments).</td>
+                                        <td>Handled in the normal course of daily operations; Acknowledgment within 1 business day.</td>
+                                    </tr>
+                                </tbody>
+                            </table>
+
+                            <h3>2.5.3. Triage Protocol (Assessment Guidelines)</h3>
+                            <p>To ensure "first-time right" categorization, agents should ask the following questions during assessment:</p>
+                            <ul>
+                                <li><strong>Safety/Risk:</strong> Does this issue involve a breach of safety, legal compliance, or a significant financial loss? (If Yes &rarr; Critical).</li>
+                                <li><strong>Scope:</strong> Does this problem affect a single user or a broad segment of our customer base? (If Broad Segment &rarr; High).</li>
+                                <li><strong>History:</strong> Is this a first-time inquiry, or is it a recurring "Gold Nugget" that has failed previous resolution attempts? (If Recurring &rarr; Critical/High for root-cause review).</li>
+                            </ul>
+
+                            <h3>2.5.4. Relationship to Performance Targets</h3>
+                            <p>Categorization in this matrix directly triggers the Response and Resolution Timeframes (Section 2.8) and the Service-Level Remedies (Section 1.4). Inaccurate prioritization is treated as "sand" (process waste) and must be logged for review during the Morning Huddle.</p>
+                        `
+                    },
+                    {
+                        id: 'sop-2-6',
+                        title: '2.6 Investigation & Response Formulation',
+                        label: 'Investigation & 5 Whys',
+                        level: 2,
+                        type: 'web',
+                        content: `
+                            <h2>2.6 Investigation & Response Formulation</h2>
+
+                            <h3>2.6.1. Objective</h3>
+                            <p>The objective of this process is to bridge the gap between "what is happening" and "what should be happening". By standardizing the investigation, we ensure that decisions are based on facts, not instincts, leading to "first-time right" resolutions that prevent the same problem from recurring.</p>
+
+                            <h3>2.6.2. Investigative Protocol</h3>
+                            <p>For any inquiry that is not resolved at the first point of contact, the assigned owner must conduct an investigation proportionate to the severity and complexity of the case.</p>
+                            <ul>
+                                <li><strong>Fact-Gathering:</strong> Review the full interaction history in the CRM and obtain all relevant records (e.g., billing statements, technical logs, or advertising copy).</li>
+                                <li><strong>Gemba Observation (Process Walk):</strong> If the issue involves a process failure, the investigator should go to the "Gemba" (the place where the work happens) to observe the process in real-time rather than relying solely on rearview-mirror data.</li>
+                                <li><strong>Stakeholder Consultation:</strong> Consult with technical, legal, or departmental specialists to verify data and confirm policy boundaries.</li>
+                            </ul>
+
+                            <h3>2.6.3. Finding the Root Cause (The "5 Whys")</h3>
+                            <p>To ensure a permanent fix, investigators must resist the impulse to jump to conclusions. Instead, apply the "5 Whys" method to dig past the symptom (the "sand") to the underlying systemic issue (the "rock").</p>
+                            <div class="callout">
+                                <strong>Example Application:</strong> If a form was filled out incorrectly, don't just fix the form. Ask why the error happened. If the reason is "unclear instructions," then the final "why" identifies the need for an SOP update or a Poka-Yoke (mistake-proofing) control in the CRM.
+                            </div>
+
+                            <h3>2.6.4. Response Formulation Guidelines</h3>
+                            <p>Once the root cause is identified, the investigator develops an initial position regarding liability and available remedies.</p>
+                            <ul>
+                                <li><strong>Tone and Style:</strong> Responses must be "Simple, Clear, and Personal". Avoid technical jargon, abbreviations, or "wordy" explanations that frustrate the customer.</li>
+                                <li><strong>Selecting Remedies:</strong> Refer to Section 1.4 (Service Promises & Remedies) to offer appropriate redress, such as an apology, refund, service credit, or a gesture of accountability.</li>
+                                <li><strong>Communicating the "Why":</strong> Beyond the "what" (the solution), explain the "why" to the customer to restore trust and demonstrate that the organization has taken active steps to prevent recurrence.</li>
+                            </ul>
+
+                            <h3>2.6.5. Documentation and Escalation Trigger</h3>
+                            <ul>
+                                <li><strong>Record Results:</strong> Document all investigative steps and the rationale for the final decision in the CRM.</li>
+                                <li><strong>Trigger Escalation:</strong> If the investigation identifies a risk of legal action, a significant data breach, or a requirement for a remedy beyond the agent's authority, immediately initiate the Internal Escalation Procedure (Section 2.9).</li>
+                            </ul>
+                        `
+                    },
+                    {
+                        id: 'sop-2-7',
+                        title: '2.7 Decision Communication & Closure',
+                        label: 'Decision & Closure',
+                        level: 2,
+                        type: 'web',
+                        content: `
+                            <h2>2.7 Decision Communication & Closure</h2>
+
+                            <h3>2.7.1. Objective</h3>
+                            <p>The objective of this final operational stage is to provide the customer with a clear resolution while ensuring that the organization learns from the interaction. By standardizing the closure process, we ensure that every journey ends with transparency and that no case is left "abandoned" in the system.</p>
+
+                            <h3>2.7.2. Communicating the Decision (ISO 10002: 7.8)</h3>
+                            <p>The resolution or any action taken must be communicated to the customer (and relevant internal staff) as soon as the decision is made.</p>
+                            <ul>
+                                <li><strong>Tone:</strong> The communication must be simple, clear, and personal, explaining not just the "what" (the decision) but also the "why" (the rationale and investigative findings).</li>
+                                <li><strong>Delivery:</strong> For high-priority or complex cases, a personal phone call from the Case Owner is preferred, followed by a formal written summary sent via the customer’s preferred channel.</li>
+                            </ul>
+
+                            <h3>2.7.3. Response Handling (ISO 10002: 7.9)</h3>
+                            <p>We categorize the conclusion of the journey based on the customer’s response to our proposed resolution:</p>
+                            <ul>
+                                <li><strong>Case A: Acceptance:</strong> If the customer accepts the proposed resolution, the action (e.g., refund, repair, account update) must be carried out immediately and recorded in the CRM.</li>
+                                <li><strong>Case B: Rejection:</strong> If the customer rejects the decision, the case remains open. The agent must:
+                                    <ul style="margin-top: 5px; margin-bottom: 5px;">
+                                        <li>Record the reasons for rejection in the CRM.</li>
+                                        <li>Inform the customer of their right to Internal Escalation (Section 2.9) or External Dispute Resolution (Section 3).</li>
+                                        <li>Continue to monitor the case until all reasonable internal and external options for recourse are exhausted.</li>
+                                    </ul>
+                                </li>
+                            </ul>
+
+                            <h3>2.7.4. Validated Closure & Feedback Loop</h3>
+                            <p>A case is only considered "Closed" when the organization has fulfilled its promises and confirmed the outcome.</p>
+                            <ul>
+                                <li><strong>Validation:</strong> Before marking a case as "Closed" in the CRM, the agent must explicitly validate with the customer that they are satisfied with the resolution.</li>
+                                <li><strong>Automated Feedback Survey:</strong> Marking the case "Closed" triggers the ISO 10004 Customer Satisfaction Survey. This serves as our "early warning system" to identify process gaps and ensure we are consistently "valuing the customer’s time".</li>
+                                <li><strong>Resolution Logging:</strong> The final resolution and the identified root cause must be logged in the Internal Knowledge Base to serve as a reference for future "One Best Way" training.</li>
+                            </ul>
+
+                            <h3>2.7.5. Maintenance of Records</h3>
+                            <p>All records of the decision, communication, and implementation actions must be maintained in accordance with the organization’s record retention policy, ensuring information integrity and accessibility for future audits.</p>
+                        `
+                    },
+                    {
+                        id: 'sop-2-8',
+                        title: '2.8 Response and Resolution Time Frames',
+                        label: 'SLA Time Frames',
+                        level: 2,
+                        type: 'web',
+                        content: `
+                            <h2>2.8 Response and Resolution Time Frames</h2>
+
+                            <h3>2.8.1. Objective</h3>
+                            <p>The objective of these timeframes is to eliminate the waste of "waiting" and "customer follow-up." By adhering to a strict SLA, we ensure that every interaction is performed in the "One Best Way," delivering peace of mind through transparency and speed.</p>
+
+                            <h3>2.8.2. SLA Matrix by Priority Level</h3>
+                            <p>Staff must adhere to the following maximum windows, which are triggered by the Priority Matrix (Section 2.5) categorization:</p>
+                            <table>
+                                <thead>
+                                    <tr>
+                                        <th>Priority Level</th>
+                                        <th>Acknowledgment (Response)</th>
+                                        <th>Target Resolution Time</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr>
+                                        <td><strong>Critical</strong></td>
+                                        <td>Within 30 minutes (24/7)</td>
+                                        <td>Immediate action and mandatory manager escalation.</td>
+                                    </tr>
+                                    <tr>
+                                        <td><strong>High</strong></td>
+                                        <td>Within 1 business hour</td>
+                                        <td>Resolved within the same business day.</td>
+                                    </tr>
+                                    <tr>
+                                        <td><strong>Medium</strong></td>
+                                        <td>Within 1 business hour</td>
+                                        <td>Resolved within 2–3 business days.</td>
+                                    </tr>
+                                    <tr>
+                                        <td><strong>Minor</strong></td>
+                                        <td>Within 1 business day</td>
+                                        <td>Resolved in the normal course of daily operations.</td>
+                                    </tr>
+                                </tbody>
+                            </table>
+
+                            <h3>2.8.3. Resolution Tiers</h3>
+                            <p>We differentiate between types of work to ensure resources are balanced effectively:</p>
+                            <ul>
+                                <li><strong>On-the-Spot Resolution:</strong> Frontline staff aim to provide immediate solutions for routine inquiries (e.g., status checks, FAQs) during the first point of contact.</li>
+                                <li><strong>Standard Resolution:</strong> Inquiries requiring cross-functional data or internal verification are referred to a resolution team with a promised response within 2 business days.</li>
+                                <li><strong>Complex/Specialized Issues:</strong> Matters involving legal, compliance, or specialized technical logic may take up to 5 business days for full resolution.</li>
+                            </ul>
+
+                            <h3>2.8.4. Transparency and Status Reporting</h3>
+                            <p>To ensure an effortless journey, we do not leave customers in the dark during long-cycle cases:</p>
+                            <ul>
+                                <li><strong>Predictable Status Reports:</strong> For any case that cannot be resolved within 48 hours, the agent must provide the customer with a specific date and time for the next verified update.</li>
+                                <li><strong>Case Number Tracking:</strong> Customers are encouraged to use their Unique Case Number for real-time tracking across all approved contact channels.</li>
+                            </ul>
+
+                            <h3>2.8.5. Monitoring and Remedy Trigger</h3>
+                            <p>SLA adherence is tracked daily on the Visual Management Board (Huddle Board).</p>
+                            <ul>
+                                <li><strong>Failure to Meet SLA:</strong> If an acknowledgment or resolution exceeds these windows, it automatically triggers the Service-Level Remedies (Section 1.4) and must be logged as "sand" for root-cause solving at the next Morning Huddle.</li>
+                            </ul>
+                        `
+                    },
+                    {
+                        id: 'sop-2-9',
+                        title: '2.9 Internal Escalation Procedure',
+                        label: 'Escalation Tiers & LSW',
+                        level: 2,
+                        type: 'web',
+                        content: `
+                            <h2>2.9 Internal Escalation Procedure</h2>
+
+                            <h3>2.9.1. Objective</h3>
+                            <p>The objective of this procedure is to provide a structured, transparent pathway for resolving inquiries that fall outside standard frontline discretionary limits. By standardizing these tiers, we eliminate "guesswork" and ensure that high-risk or complex issues receive the necessary leadership expertise without losing the gains of our operational stability.</p>
+
+                            <h3>2.9.2. Escalation Triggers</h3>
+                            <p>Staff must initiate an internal escalation if any of the following "triggers" are met during the interaction journey:</p>
+                            <ul>
+                                <li><strong>Priority Trigger:</strong> Any inquiry categorized as "Critical" in the Priority Matrix.</li>
+                                <li><strong>Capacity Trigger:</strong> An inquiry that remains unresolved after 48 hours (for Minor/Medium) or 4 hours (for High).</li>
+                                <li><strong>Policy Trigger:</strong> A request for a remedy (e.g., refund or credit) that exceeds an agent's established discretionary limit.</li>
+                                <li><strong>Risk Trigger:</strong> Identification of potential legal action, data breach, or significant reputational damage.</li>
+                            </ul>
+
+                            <h3>2.9.3. Tiered Accountability Structure (Lean DMS)</h3>
+                            <p>We utilize a three-tier system to manage escalations, ensuring that problems flow to the people best able to solve them:</p>
+                            <table>
+                                <thead>
+                                    <tr>
+                                        <th>Tier Level</th>
+                                        <th>Responsible Leader</th>
+                                        <th>Action Required</th>
+                                        <th>Escalation Format</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr>
+                                        <td><strong>Tier 1: Frontline</strong></td>
+                                        <td>Team Leader</td>
+                                        <td>Resolve policy ambiguities and provide technical coaching to the agent.</td>
+                                        <td>Immediate Walk-up or Chat Ping; record on Daily Tracking Sheet.</td>
+                                    </tr>
+                                    <tr>
+                                        <td><strong>Tier 2: Tactical</strong></td>
+                                        <td>Operations Manager</td>
+                                        <td>Address "Critical" tickets and cross-functional roadblocks that Tier 1 cannot resolve.</td>
+                                        <td>Tier 2 Huddle Board review; documented in CRM with "Manager Flag".</td>
+                                    </tr>
+                                    <tr>
+                                        <td><strong>Tier 3: Strategic</strong></td>
+                                        <td>Head of Operations</td>
+                                        <td>Manage systemic risks, legal disputes, and "Rocks" requiring budget or structural change.</td>
+                                        <td>Management KPI Review; formal briefing and potential SOP revision.</td>
+                                    </tr>
+                                </tbody>
+                            </table>
+
+                            <h3>2.9.4. Leader Standard Work (LSW) Integration</h3>
+                            <p>To ensure these escalations are handled consistently, leaders must adhere to the following routines:</p>
+                            <ul>
+                                <li><strong>Gemba Walks (Process Walks):</strong> Managers must spend time in the work area to observe adherence to the escalation protocol and assist with problems in real-time.</li>
+                                <li><strong>Process Confirmation:</strong> Leaders conduct side-by-side sessions with agents to verify that the "One Best Way" for escalation is being followed correctly.</li>
+                                <li><strong>Closing the Loop:</strong> Once an escalated issue is resolved, the leader must communicate the outcome back to the original agent. If the resolution involves a new "One Best Way," it must be brought to the Advisory Team for an SOP update.</li>
+                            </ul>
+
+                            <h3>2.9.5. Conflict of Resolution</h3>
+                            <p>If an agent and a Team Leader disagree on a proposed resolution, the Operations Manager serves as the final internal arbiter. In accordance with ISO 10002, this process is designed to be impartial and objective; the primary focus remains on the systemic failure and the customer's needs, not on assigning blame to individual staff members.</p>
+
+                            <h3>2.9.6. Documentation Requirements</h3>
+                            <p>To prevent the customer from needing to repeat information—thereby "valuing the customer’s time"—all escalated cases must fulfill these three criteria before being transferred:</p>
+                            <ul>
+                                <li><strong>Full Log Notes:</strong> A factual description of all actions taken and reasons for the escalation must be attached to the CRM record.</li>
+                                <li><strong>Escalation Log Entry:</strong> The case must be recorded in the departmental Escalation Log to allow for monthly trend analysis and "Strategic Rock" reviews.</li>
+                                <li><strong>Customer Notification:</strong> The agent must inform the customer that their inquiry has been escalated and provide a specific date and time for the next status update.</li>
+                            </ul>
+
+                            <h3>2.9.7. Escalation Contacts Table</h3>
+                            <p>Staff must use this table to identify the correct Subject Matter Expert (SME) or Manager based on the risk type identified during Triage:</p>
+                            <table>
+                                <thead>
+                                    <tr>
+                                        <th>Risk / Inquiry Type</th>
+                                        <th>Primary Escalation Contact</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr>
+                                        <td><strong>Operational Roadblocks</strong></td>
+                                        <td>Area Team Leader</td>
+                                    </tr>
+                                    <tr>
+                                        <td><strong>Fraud / Financial Risks</strong></td>
+                                        <td>Finance Manager</td>
+                                    </tr>
+                                    <tr>
+                                        <td><strong>Technical / IT Support</strong></td>
+                                        <td>Level 2 IT Support Desk</td>
+                                    </tr>
+                                    <tr>
+                                        <td><strong>Customer Experience Exceptions</strong></td>
+                                        <td>Customer Success Lead</td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        `
+                    },
+                    {
+                        id: 'sop-sec3',
+                        title: 'Section 3: External Dispute Resolution (ISO 10003)',
+                        label: 'ISO 10003 Governance Master',
+                        level: 1,
+                        type: 'web',
+                        content: `
+                            <h2>Section 3: External Dispute Resolution (ISO 10003)</h2>
+                            <div class="callout">
+                                <strong>Compliance Standard:</strong> Aligned with ISO 10003 Quality Management — Customer Satisfaction — Guidelines for dispute resolution external to organizations.
+                            </div>
+                            <p>This master section governs independent dispute referral criteria, provider selection and customer accessibility, organization response formulation, participation protocols across dispute resolution methods (Facilitative, Advisory, Determinative), and post-resolution implementation. Select any sub-section on the left navigation directory (<strong>3.1 Dispute Referral Criteria</strong> through <strong>3.5 Implementation of Resolution</strong>) to view full standard operating procedures.</p>
+                        `
+                    },
+                    {
+                        id: 'sop-3-1',
+                        title: '3.1 Dispute Referral Criteria',
+                        label: 'Referral Criteria & Triggers',
+                        level: 2,
+                        type: 'web',
+                        content: `
+                            <h2>3.1 Dispute Referral Criteria</h2>
+
+                            <h3>3.1.1. Objective</h3>
+                            <p>The primary goal of this section is to provide radical transparency regarding when an inquiry is eligible for independent redress. By standardizing these triggers, we ensure that no customer is trapped in an endless internal cycle, maintaining the integrity of our service promises.</p>
+
+                            <h3>3.1.2. Internal Exhaustion Rule</h3>
+                            <p>In accordance with ISO 10003 (Clause 7.2), a complaint is eligible for external referral only after the Tier 3 Strategic Escalation (Section 2.9) has been completed. The customer must have received a final internal decision that they have formally rejected in writing.</p>
+
+                            <h3>3.1.3. Referral Triggers</h3>
+                            <p>The designated Case Owner must offer the customer a referral to our External Dispute Resolution (EDR) provider if any of the following "triggers" occur:</p>
+                            <ul>
+                                <li><strong>Final Decision Rejection:</strong> The customer explicitly rejects the final resolution offer provided by the Head of Operations.</li>
+                                <li><strong>SLA Implementation Failure:</strong> The internal resolution has not been fully implemented (e.g., refund not processed) within the promised Response and Resolution Timeframes defined in Section 2.8.</li>
+                                <li><strong>Regulatory Requirement:</strong> A statutory or legal mandate requires that the specific issue (e.g., data privacy breach or specialized financial fraud) be reviewed by an external ombudsman (neutral mediator).</li>
+                                <li><strong>Complex Stalemate:</strong> The organization’s internal investigation (Section 2.6) determines that a resolution is not possible due to a fundamental disagreement on facts that requires independent arbitration.</li>
+                            </ul>
+
+                            <h3>3.1.4. Exclusions from Referral</h3>
+                            <p>To ensure the "One Best Way" is applied efficiently, the following are excluded from external referral:</p>
+                            <ul>
+                                <li>Employment-related disputes.</li>
+                                <li>Complaints that have not first been logged and processed through the internal Standardized Workflow (Section 2.2).</li>
+                                <li>Issues that have already been adjudicated by a court of law or a separate determinative arbitrator (arbitrator who can provide adjudication).</li>
+                            </ul>
+                        `
+                    },
+                    {
+                        id: 'sop-3-2',
+                        title: '3.2 Provider Selection & Access',
+                        label: 'Provider Standards & Access',
+                        level: 2,
+                        type: 'web',
+                        content: `
+                            <h2>3.2 Provider Selection & Access</h2>
+
+                            <h3>3.2.1. Criteria for Provider Selection</h3>
+                            <p>To ensure the integrity of our dispute resolution, the organization only partners with providers that meet strict standards for independence and competence:</p>
+                            <ul>
+                                <li><strong>Independence & Objectivity:</strong> The selected provider must be a separate legal entity. Dispute resolvers must be insulated from any influence by our organization’s management to ensure their judgments are independent.</li>
+                                <li><strong>Reputation & Standards:</strong> We prioritize providers who choose to adhere to ISO 10003 or other recognized international dispute-resolution standards and who maintain a strong reputation with consumer protection agencies.</li>
+                                <li><strong>Resource Adequacy:</strong> The provider must demonstrate they have sufficient trained personnel and access to technical or legal experts necessary to handle the volume and complexity of our specific industry.</li>
+                                <li><strong>Operational Alignment:</strong> The provider’s methods (e.g., online portals or phone-based mediation) must be able to coordinate with our CRM for a seamless transfer of case records.</li>
+                            </ul>
+
+                            <h3>3.2.2. Ensuring Customer Access</h3>
+                            <p>We are committed to making independent redress accessible to all, ensuring that no customer is disadvantaged by their location or ability.</p>
+                            <ul>
+                                <li><strong>Timely Information:</strong> At the conclusion of an unsuccessful internal resolution, the agent must immediately provide the customer with the provider’s name, contact details, and a clear copy of their procedures.</li>
+                                <li><strong>Alternative Formats:</strong> Following the "One Best Way" for inclusion, all information about the external process must be available in clear language and alternative formats (e.g., large print, audio, or accessible websites) for customers with different abilities.</li>
+                                <li><strong>Flexible Submission:</strong> To "value the customer’s time," we utilize providers that allow for participation through multiple convenient channels, including Phone, Mail, or Online submissions, eliminating the need for unnecessary travel.</li>
+                                <li><strong>Cost-Free Redress:</strong> In accordance with ISO 10002 guiding principles, access to the dispute-resolution process is provided free of charge to the customer.</li>
+                            </ul>
+
+                            <h3>3.2.3. Voluntary Participation & Informed Consent</h3>
+                            <ul>
+                                <li><strong>Individual Rights:</strong> Participation in the external process is voluntary for individual customers. It cannot be a required condition for receiving our products or services.</li>
+                                <li><strong>Informed Decision:</strong> Before the process begins, the customer must be given a full explanation of the method being used (Facilitative, Advisory, or Determinative) and whether the outcome will be legally binding.</li>
+                            </ul>
+                        `
+                    },
+                    {
+                        id: 'sop-3-3',
+                        title: '3.3 Formulating the Organization\'s Response',
+                        label: 'Response Formulation',
+                        level: 2,
+                        type: 'web',
+                        content: `
+                            <h2>3.3 Formulating the Organization's Response</h2>
+
+                            <h3>3.3.1. Objective</h3>
+                            <p>The objective of this procedure is to ensure that the organization provides a consistent, fact-based, and timely response to the External Dispute Resolution (EDR) provider. By standardizing this evaluation, we protect the organization’s reputation while remaining committed to finding a fair resolution for the customer.</p>
+
+                            <h3>3.3.2. Evaluation of the Dispute (Fact-Gathering)</h3>
+                            <p>Upon receipt of a dispute notice, the designated Case Owner (typically the Head of Operations) must conduct a thorough evaluation of the matter.</p>
+                            <ul>
+                                <li><strong>Record Retrieval:</strong> Obtain all records related to the original transaction and the subsequent internal journey. This includes CRM interaction logs, advertising copy, sales records, and any inspection or repair reports.</li>
+                                <li><strong>Convertible Formats:</strong> Ensure all evidence is maintained in easily convertible formats (e.g., PDFs or standardized data exports) for seamless transfer to the provider or dispute resolver.</li>
+                                <li><strong>Stakeholder Consultation:</strong> Consult with relevant internal experts—such as technical specialists, legal counsel, or marketing leads—to verify data and confirm policy boundaries.</li>
+                            </ul>
+
+                            <h3>3.3.3. Development of the Initial Position</h3>
+                            <p>After gathering all relevant facts, the organization must develop its formal position regarding the dispute.</p>
+                            <ul>
+                                <li><strong>Position Options:</strong> The initial position may be one of the following:
+                                    <ul style="margin-top: 5px; margin-bottom: 5px;">
+                                        <li><em>Full Resolution:</em> Resolve the matter exactly as requested by the complainant.</li>
+                                        <li><em>Partial Resolution:</em> Provide some, but not all, of the remedies requested.</li>
+                                        <li><em>No Resolution:</em> Provide none of the remedies requested, based on the findings of the investigation.</li>
+                                    </ul>
+                                </li>
+                                <li><strong>Goodwill Gestures:</strong> In accordance with ISO 10003, the organization may choose to offer a remedy as a goodwill gesture—even if not legally required—to preserve the customer relationship or recognize that a resolver may view the situation differently.</li>
+                            </ul>
+
+                            <h3>3.3.4. Communication Protocol</h3>
+                            <ul>
+                                <li><strong>Transparency:</strong> The organization’s position must be communicated clearly and in writing to the provider or directly to the customer (with a copy to the provider).</li>
+                                <li><strong>Clarity:</strong> Use the "No Fluff" style—simple, clear, and personal language—to explain the rationale behind the organization's position to ensure it is understood by all parties.</li>
+                                <li><strong>Timeliness:</strong> This response must be formulated and delivered within the timeframes established by the EDR provider’s procedures to avoid default judgments.</li>
+                            </ul>
+
+                            <h3>3.3.5. Settlement Authority</h3>
+                            <p>To ensure the process moves efficiently, the Case Owner must have clearly defined settlement authority. If the proposed remedy exceeds the Case Owner's discretionary limit, immediate approval must be sought from the Executive Committee before the response is finalized.</p>
+                        `
+                    },
+                    {
+                        id: 'sop-3-4',
+                        title: '3.4 Participation in Resolution Methods',
+                        label: 'Methods & Preparation',
+                        level: 2,
+                        type: 'web',
+                        content: `
+                            <h2>3.4 Participation in Resolution Methods</h2>
+
+                            <h3>3.4.1. Objective</h3>
+                            <p>The objective of this section is to provide a standardized framework for the organization’s participation in external proceedings. By defining the available methods and the preparation required, we ensure a "first-time right" presentation of our case, minimizing the risk of adverse binding decisions.</p>
+
+                            <h3>3.4.2. Dispute Resolution Methods (ISO 10003 Annex A)</h3>
+                            <p>We will participate in the process using the method(s) defined by the External Dispute Resolution (EDR) provider. These methods may be used individually or in sequence:</p>
+                            <ul>
+                                <li><strong>Facilitative Method:</strong> A neutral resolver assists both parties in reaching a voluntary agreement. The resolver does not recommend or determine a specific outcome.</li>
+                                <li><strong>Advisory Method:</strong> The resolver evaluates the facts and provides suggestions or non-binding recommendations on how the issues should be resolved.</li>
+                                <li><strong>Determinative Method:</strong> The resolver evaluates the dispute and renders a formal decision on the resolution. This decision is typically legally binding and enforceable in court.</li>
+                            </ul>
+
+                            <h3>3.4.3. Preparation Protocol (ISO 10003: 7.5.2)</h3>
+                            <p>For every referred dispute, the designated Case Administrator (Head of Operations or their delegate) must complete the following preparation checklist:</p>
+                            <ul>
+                                <li><strong>Case Strategy:</strong> Determine the preferred manner of participation (e.g., in-person, telephone, or written submission) based on the complexity of the case.</li>
+                                <li><strong>Evidence Compilation:</strong> Organize all relevant documentary evidence, including CRM logs, transaction records, and investigative findings from Section 2.6.</li>
+                                <li><strong>Witness Identification:</strong> Identify potential internal witnesses (frontline staff or specialists) who can provide factual testimony.</li>
+                                <li><strong>Settlement Range:</strong> Identify a range of resolutions that are acceptable to the organization to allow for flexible outcomes during facilitative sessions.</li>
+                                <li><strong>Settlement Authority:</strong> Formally document who has the authority to agree to a settlement during the process to ensure timeliness.</li>
+                            </ul>
+
+                            <h3>3.4.4. Conduct During Proceedings</h3>
+                            <ul>
+                                <li><strong>Initial Presentation:</strong> Develop a clear, written, or oral statement outlining the organization's position, supported by the evidence gathered.</li>
+                                <li><strong>Ongoing Evaluation:</strong> Continually assess the potential for reaching a voluntary settlement before the process concludes to minimize further time-waste.</li>
+                                <li><strong>Respectful Engagement:</strong> Maintain a professional and objective tone, focusing on the facts and the process rather than assigning blame.</li>
+                            </ul>
+
+                            <h3>3.4.5. Post-Process Review</h3>
+                            <p>If the process concludes with a recommendation (Advisory) or a determinative decision, the Case Administrator must:</p>
+                            <ul>
+                                <li><strong>Review for Compliance:</strong> Evaluate if the relevant principles and procedures were followed correctly.</li>
+                                <li><strong>Formal Response:</strong> Communicate the organization’s acceptance or rejection of the outcome to both the provider and the customer within the established timeframes.</li>
+                            </ul>
+                        `
+                    },
+                    {
+                        id: 'sop-3-5',
+                        title: '3.5 Implementation of Resolution',
+                        label: 'Implementation & Improvement',
+                        level: 2,
+                        type: 'web',
+                        content: `
+                            <h2>3.5 Implementation of Resolution</h2>
+
+                            <h3>3.5.1. Objective</h3>
+                            <p>The objective of this final stage is to ensure that every external resolution is executed accurately and validated with the customer. By standardizing the implementation, we fulfill our Service Promises and transform external failures into "gold nuggets" for systemic refinement.</p>
+
+                            <h3>3.5.2. Execution of Required Actions</h3>
+                            <p>Upon the conclusion of the dispute process, the Case Administrator must immediately determine the specific actions required for implementation.</p>
+                            <ul>
+                                <li><strong>Assign Responsibility:</strong> Formally assign tasks to the relevant internal departments (e.g., Finance for refunds, Technical for repairs, or Sales for contract rescissions).</li>
+                                <li><strong>Coordinate Timeline:</strong> Inform all responsible parties of applicable deadlines to ensure the implementation is completed within the windows promised to the provider or customer.</li>
+                                <li><strong>Complainant Actions:</strong> If the resolution requires the customer to take a specific action (e.g., returning a product or providing evidence of service failure), provide them with clear, step-by-step instructions to keep the process effortless.</li>
+                            </ul>
+
+                            <h3>3.5.3. Verification & Provider Notification</h3>
+                            <ul>
+                                <li><strong>Confirmation of Completion:</strong> The Case Administrator must verify that all internal actions have been executed correctly according to the "One Best Way".</li>
+                                <li><strong>Notify Provider:</strong> Once implementation is verified, notify the External Dispute Resolution (EDR) provider that the matter is resolved. If implementation is delayed for any reason, the provider must be informed of the reasons for the delay.</li>
+                            </ul>
+
+                            <h3>3.5.4. Customer Validation and Closure</h3>
+                            <ul>
+                                <li><strong>Validate Satisfaction:</strong> Before closing the record, contact the customer to confirm they are satisfied that the resolution has been fully implemented.</li>
+                                <li><strong>Closing the File:</strong> Once satisfaction is validated, the case is marked "Closed" in the CRM. All records of the dispute, including evidence and final outcomes, must be archived per the organization’s record retention policy.</li>
+                            </ul>
+
+                            <h3>3.5.5. The Continuous Improvement Loop (LSW Integration)</h3>
+                            <p>Every external dispute outcome is a catalyst for improvement. We do not simply "firefight" the symptom; we fix the system.</p>
+                            <ul>
+                                <li><strong>Root-Cause Review:</strong> The final resolution and the underlying root cause must be brought to the next Morning Huddle.</li>
+                                <li><strong>Standard Work Update:</strong> If the dispute identifies a flaw in the current SOP, the Advisory Team must be engaged to design and test a new "One Best Way" to prevent recurrence.</li>
+                                <li><strong>Involve the Original Team:</strong> Whenever an SOP is changed due to a dispute, involve the frontline staff who handled the original inquiry in testing the new solution. This reinforces an ownership culture where staff see their feedback turning into real change.</li>
+                            </ul>
+                        `
+                    },
+                    {
+                        id: 'sop-sec4',
+                        title: 'Section 4: Monitoring, Measuring & Improvement (ISO 10004)',
+                        label: 'ISO 10004 Governance Master',
+                        level: 1,
+                        type: 'web',
+                        content: `
+                            <h2>Section 4: Monitoring, Measuring & Improvement (ISO 10004)</h2>
+                            <div class="callout">
+                                <strong>Compliance Standard:</strong> Aligned with ISO 10004 Quality Management — Customer Satisfaction — Guidelines for monitoring and measuring.
+                            </div>
+                            <p>This master section governs customer expectation identification (Kano Model & TQM), feedback survey design, data analysis via the Four-Zone Importance-Performance Analysis (IPA) Matrix and Customer Satisfaction Index (CSI), Daily Huddles with "Gold Nugget" 5 Whys reviews, and Management Review protocols. Select any sub-section on the left navigation directory (<strong>4.1 Identifying Customer Expectations</strong> through <strong>4.5 Management Review Protocol</strong>) to view full standard operating procedures.</p>
+                        `
+                    },
+                    {
+                        id: 'sop-4-1',
+                        title: '4.1 Identifying Customer Expectations',
+                        label: 'Expectations & Kano Model',
+                        level: 2,
+                        type: 'web',
+                        content: `
+                            <h2>4.1 Identifying Customer Expectations</h2>
+
+                            <h3>4.1.1. Objective</h3>
+                            <p>The objective of this section is to provide a systematic method for capturing the "voice of the customer." By clearly defining who our customers are and what they require (both explicitly and implicitly), we ensure our "One Best Way" remains aligned with market reality and provides the foundation for our Customer Satisfaction Index (CSI).</p>
+
+                            <h3>4.1.2. Identification of Customer Segments</h3>
+                            <p>To ensure comprehensive monitoring, staff must identify and categorize the specific groups whose expectations we intend to determine. These include:</p>
+                            <ul>
+                                <li><strong>Current Customers:</strong> Regular or occasional users who have received our services recently.</li>
+                                <li><strong>Direct vs. Indirect Customers:</strong> Those who receive service directly from us versus those who interact through a distributor or third party.</li>
+                                <li><strong>Potential & Lost Customers:</strong> Identifying those interested in our services and, crucially, those who have ceased interaction to understand the reasons for their change in preference.</li>
+                            </ul>
+
+                            <h3>4.1.3. Determining Expectations (The "Wish List")</h3>
+                            <p>When assessing what a customer values, agents and managers must look beyond just what is written in a contract. We evaluate expectations based on:</p>
+                            <ul>
+                                <li><strong>Stated Requirements:</strong> Explicitly communicated needs (e.g., "I need a refund").</li>
+                                <li><strong>Implied Requirements:</strong> Aspects the customer presupposes but does not state (e.g., data security or professional courtesy).</li>
+                                <li><strong>Statutory & Regulatory Requirements:</strong> Mandatory standards we must meet regardless of the customer's request.</li>
+                                <li><strong>The "Wish List":</strong> Attractive features the customer has not yet articulated but would find valuable.</li>
+                            </ul>
+
+                            <h3>4.1.4. Categorizing Characteristics (The Kano Framework & TQM Integration)</h3>
+                            <div class="callout">
+                                <strong>TQM Alignment & Quality Training:</strong> Aligned with <em>TQM Training Module: Customer-Defined Quality</em>. Total Quality Management focuses on continuous variation reduction in "Basics" while driving structured innovation in "Delighters." Must-Be features must be stabilized via SOP standardization before resources are allocated to developing Delighters.
+                            </div>
+                            <p>To prioritize our improvement efforts, we categorize identified expectations into three "Impact Zones":</p>
+                            <ul>
+                                <li><strong>Basics (Must-Be):</strong> Characteristics that only prevent dissatisfaction. Customers don't thank us for them, but their absence causes extreme dissatisfaction (e.g., accurate billing). Must be strictly standardized via SOP.</li>
+                                <li><strong>Performance (More-is-Better):</strong> Characteristics that directly increase satisfaction the better they are fulfilled (e.g., faster resolution times).</li>
+                                <li><strong>Latent Opportunities (Delighters):</strong> Potentially attractive features that are not yet anticipated. Fulfilling these provides a major competitive advantage (e.g., proactive status updates before the customer asks).</li>
+                            </ul>
+
+                            <h3>4.1.5. Continuous Reassessment</h3>
+                            <p>Because customer expectations are dynamic and "delighters" of today often become "basics" of tomorrow, this identification process must be systematic and continuous. Data from the Listening Team and Morning Huddles will be used to update this section's findings quarterly.</p>
+                        `
+                    },
+                    {
+                        id: 'sop-4-2',
+                        title: '4.2 Customer Feedback Survey Design',
+                        label: 'Survey Design & Execution',
+                        level: 2,
+                        type: 'web',
+                        content: `
+                            <h2>4.2 Customer Feedback Survey Design</h2>
+
+                            <h3>4.2.1. Objective</h3>
+                            <p>The objective of this design is to create a standardized, "No Fluff" questionnaire that captures the customer's perception of our service quality. By using a consistent scale, we can track performance trends over time, conduct benchmarking, and calculate a verifiable Customer Satisfaction Index (CSI).</p>
+
+                            <h3>4.2.2. Survey Methodology & Trigger Expansion</h3>
+                            <p>We utilize Automated Quantitative Surveys delivered via email or SMS. To ensure a 100% capture rate, the CRM system is programmed to automatically trigger the survey immediately upon marking a case as "Closed". The survey must remain "Simple, Clear, and Personal," using ordinary language that matches the customer's vocabulary and avoids technical jargon.</p>
+                            
+                            <h4>Survey Execution Protocol Parameters</h4>
+                            <table>
+                                <thead>
+                                    <tr>
+                                        <th>Protocol Parameter</th>
+                                        <th>Standard Operating Requirement</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr>
+                                        <td><strong>Delivery Timing</strong></td>
+                                        <td>Trigger survey 15 minutes post-case closure to capture fresh feedback without interrupting immediate resolution work.</td>
+                                    </tr>
+                                    <tr>
+                                        <td><strong>Survey Throttling</strong></td>
+                                        <td>Limit surveys to maximum 1 per customer every 30 days to prevent survey fatigue.</td>
+                                    </tr>
+                                    <tr>
+                                        <td><strong>Non-Response Protocol</strong></td>
+                                        <td>If uncompleted after 48 hours, send 1 automated SMS/email reminder; purge survey link after 7 days.</td>
+                                    </tr>
+                                    <tr>
+                                        <td><strong>Channel Priority</strong></td>
+                                        <td>Primary: In-app / Email; Secondary (High-Priority Cases): SMS with direct quick-link.</td>
+                                    </tr>
+                                </tbody>
+                            </table>
+
+                            <h3>4.2.3. Key Measurement Characteristics</h3>
+                            <p>In alignment with our Service Promises (Section 1.4), the survey focuses on three core characteristics identified by customers as high-impact:</p>
+                            <ul>
+                                <li><strong>Resolution Quality:</strong> Did we solve the actual problem "first-time right"?</li>
+                                <li><strong>Timeliness:</strong> Did we "value the customer's time" by adhering to promised SLAs?</li>
+                                <li><strong>Customer Effort:</strong> How easy or "effortless" was the journey for the customer?</li>
+                            </ul>
+
+                            <h3>4.2.4. The 5-Point Likert Scale</h3>
+                            <p>To provide a clear measurement of attitudes across a continuum, we utilize the standard 5-point Likert scale for all performance questions:</p>
+                            <ul>
+                                <li><strong>5 – Strongly Agree</strong> (Exceeds Expectations)</li>
+                                <li><strong>4 – Agree</strong> (Meets Expectations)</li>
+                                <li><strong>3 – Neutral</strong> (Neither Satisfied nor Dissatisfied)</li>
+                                <li><strong>2 – Disagree</strong> (Below Expectations)</li>
+                                <li><strong>1 – Strongly Disagree</strong> (Significant Failure)</li>
+                            </ul>
+                            <div class="callout">
+                                <strong>Note:</strong> For qualitative depth, the survey concludes with one open-ended question inviting the customer to share a "Gold Nugget" or suggestion for improvement.
+                            </div>
+
+                            <h3>4.2.5. Information Integrity & Confidentiality</h3>
+                            <ul>
+                                <li><strong>Objectivity:</strong> To avoid bias, survey results are collected and aggregated by the Quality Assurance Manager, ensuring frontline agents do not influence the data.</li>
+                                <li><strong>Confidentiality:</strong> All personally identifiable information is protected and kept confidential unless the customer gives explicit consent for their feedback to be identified during a root-cause review.</li>
+                            </ul>
+                        `
+                    },
+                    {
+                        id: 'sop-4-3',
+                        title: '4.3 Data Analysis & Reporting',
+                        label: 'IPA Matrix & CSI Metric',
+                        level: 2,
+                        type: 'web',
+                        content: `
+                            <h2>4.3 Data Analysis & Reporting</h2>
+
+                            <h3>4.3.1. Objective</h3>
+                            <p>The objective of this procedure is to convert customer feedback and operational data into a clear "health report" of our service delivery. By standardizing our analytical methods, we provide a stable baseline to measure the effectiveness of our "One Best Way" and identify systemic "rocks" before they disrupt the customer journey.</p>
+
+                            <h3>4.3.2. Data Verification & Preparation</h3>
+                            <p>Before analysis begins, the Quality Assurance Manager must verify the integrity of the data:</p>
+                            <ul>
+                                <li><strong>Verification:</strong> Check for errors, completeness, and accuracy in the automated survey responses.</li>
+                                <li><strong>Categorization:</strong> Group open-ended "Gold Nugget" comments into defined categories (e.g., Billing, Technical Support) to identify recurring themes.</li>
+                                <li><strong>Stratification:</strong> Segment the data by customer type, region, or product to reveal differences in satisfaction levels between different groups.</li>
+                            </ul>
+
+                            <h3>4.3.3. Core Analytical Methods & Four-Zone IPA Matrix</h3>
+                            <p>We utilize standardized statistical tools to interpret the data, including Mean & Median calculations and Trend Analysis. Service characteristics are classified using the <strong>Importance-Performance Analysis (IPA) Four-Zone Framework</strong>:</p>
+                            <table>
+                                <thead>
+                                    <tr>
+                                        <th>IPA Zone</th>
+                                        <th>Criteria (Importance vs. Performance)</th>
+                                        <th>Strategic Operational Action</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr>
+                                        <td><strong>Zone 1: Strategic Rocks</strong></td>
+                                        <td>High Importance + Low Performance</td>
+                                        <td>Immediate Management Review & Priority SOP Revision.</td>
+                                    </tr>
+                                    <tr>
+                                        <td><strong>Zone 2: Keep Up Good Work</strong></td>
+                                        <td>High Importance + High Performance</td>
+                                        <td>Maintain current standard & codify via SOP baseline.</td>
+                                    </tr>
+                                    <tr>
+                                        <td><strong>Zone 3: Low Priority</strong></td>
+                                        <td>Low Importance + Low Performance</td>
+                                        <td>Secondary priority; no immediate shift of resources.</td>
+                                    </tr>
+                                    <tr>
+                                        <td><strong>Zone 4: Possible Overkill</strong></td>
+                                        <td>Low Importance + High Performance</td>
+                                        <td>Streamline excess effort to optimize operational efficiency.</td>
+                                    </tr>
+                                </tbody>
+                            </table>
+
+                            <h3>4.3.4. The Customer Satisfaction Index (CSI) & Benchmarking</h3>
+                            <p>The CSI is a single weighted average combining Direct Surveys with Indirect Operational Indicators:</p>
+                            <div class="callout">
+                                <strong>CSI Mathematical Formula:</strong><br>
+                                <code>CSI = (0.50 × S_Direct) + (0.30 × S_Resolution) + (0.20 × [100 - S_Complaints])</code><br><br>
+                                <em>Where:</em><br>
+                                • <strong>S_Direct:</strong> Aggregated Direct Survey Score scaled to 0–100.<br>
+                                • <strong>S_Resolution:</strong> First-Time Right (FTR) Resolution Rate (%).<br>
+                                • <strong>S_Complaints:</strong> Escalated Complaint Rate (% of total volume).
+                            </div>
+                            
+                            <h4>Industry Benchmarking Determination Protocols</h4>
+                            <ul>
+                                <li><strong>Internal Baseline:</strong> Establish an initial 90-day rolling baseline score prior to external benchmarking.</li>
+                                <li><strong>Published Sector Benchmarks:</strong> Reference published regional customer satisfaction indices (e.g., CCMA, ACSI) for the relevant service industry segment.</li>
+                                <li><strong>Competitor & Peer Sampling:</strong> Conduct bi-annual mystery shopping or third-party audit reports to gauge relative market standing.</li>
+                            </ul>
+
+                            <h3>4.3.5. Reporting & Visual Management</h3>
+                            <ul>
+                                <li><strong>The Weekly Dashboard:</strong> A standardized online dashboard presents the CSI and key service metrics, updated every Monday for Performance Dialogues.</li>
+                                <li><strong>Radical Transparency:</strong> CSI results are made visible to all levels of the organization to encourage accountability and an ownership culture.</li>
+                                <li><strong>Management Review Report:</strong> A monthly formal report identifies systemic risks, highlights exemplary performance, and provides data-driven recommendations.</li>
+                            </ul>
+                        `
+                    },
+                    {
+                        id: 'sop-4-4',
+                        title: '4.4 Morning Huddle & "Gold Nugget" Root-Cause Review',
+                        label: 'Huddles & 5 Whys',
+                        level: 2,
+                        type: 'web',
+                        content: `
+                            <h2>4.4 Morning Huddle & "Gold Nugget" Root-Cause Review</h2>
+
+                            <h3>4.4.1. Objective</h3>
+                            <p>The objective of the Morning Huddle is to provide a standardized, brief forum for the team to review the previous day’s performance, identify immediate roadblocks, and initiate root-cause problem solving. By treating every process failure as a "gold nugget," we ensure that we do not just "firefight" symptoms but permanently improve the system.</p>
+
+                            <h3>4.4.2. Huddle Logistics</h3>
+                            <ul>
+                                <li><strong>Frequency:</strong> Daily (Monday–Friday).</li>
+                                <li><strong>Time:</strong> 9:00 AM – 9:15 AM (15 Minutes).</li>
+                                <li><strong>Location:</strong> Standing at the Visual Management (Huddle) Board.</li>
+                                <li><strong>Facilitator:</strong> The Area Team Leader or designated delegate.</li>
+                            </ul>
+
+                            <h3>4.4.3. Standard Huddle Agenda (The 15-Minute Routine)</h3>
+                            <ol>
+                                <li><strong>Performance Review:</strong> Compare yesterday’s Actual vs. Expected results (Resolution rates, SLA adherence). Mark board with Red/Green status indicators.</li>
+                                <li><strong>Recognition & Praise:</strong> Acknowledge "wins"—cases handled with exceptional quality or "first-time right" resolution.</li>
+                                <li><strong>Roadblock (Sand) Review:</strong> Review entries on the Daily Tracking Sheet. Differentiate between "Sand" (one-off issues) and "Rocks" (systemic issues).</li>
+                                <li><strong>"Gold Nugget" Selection:</strong> Identify recurring or high-risk "Rocks" as "gold nuggets" for immediate root-cause review.</li>
+                                <li><strong>Task Assignment:</strong> Use the "What can we do today?" rule to assign specific actions to team members. Record "Who, What, and When" on the accountability board.</li>
+                            </ol>
+
+                            <h3>4.4.4. Root-Cause Review Protocol (The "5 Whys")</h3>
+                            <p>For every "gold nugget" identified, the team or a designated sub-group must conduct a root-cause review using the "5 Whys" method.</p>
+                            <ul>
+                                <li><strong>The Goal:</strong> Dig past the human or technical symptom to find the underlying systemic flaw (e.g., unclear SOP instructions or missing CRM controls).</li>
+                                <li><strong>Corrective Action:</strong> If a solution is identified, it must be tested and validated before being built into the next SOP Version.</li>
+                                <li><strong>Involving the Team:</strong> Always involve the frontline staff who first raised the issue in designing and testing the fix to ensure the new "One Best Way" is practical and respected.</li>
+                            </ul>
+
+                            <h3>4.4.5. The Escalation Trigger</h3>
+                            <p>If a problem identified in the huddle is "bigger than the team can handle"—such as a budgetary requirement or a cross-functional policy conflict—the Team Leader must immediately move it to the Tier 2 Tactical Huddle Board for management resolution.</p>
+                        `
+                    },
+                    {
+                        id: 'sop-4-5',
+                        title: '4.5 Management Review Protocol',
+                        label: 'Management Review',
+                        level: 2,
+                        type: 'web',
+                        content: `
+                            <h2>4.5 Management Review Protocol</h2>
+
+                            <h3>4.5.1. Objective</h3>
+                            <p>The objective of the Management Review is to provide a formal forum for leadership to evaluate the health of the Customer Service System. By standardizing this review, we ensure that the "One Best Way" is not only followed but also strategically evolved to meet changing market needs, ensuring our service remains a "growth story".</p>
+
+                            <h3>4.5.2. Review Frequency and Participants</h3>
+                            <ul>
+                                <li><strong>Frequency:</strong> Formal reviews must be conducted monthly.</li>
+                                <li><strong>Participants:</strong> Chaired by the Head of Operations; includes Quality Assurance Manager, Area Team Leaders, and stakeholders from Finance or IT.</li>
+                            </ul>
+
+                            <h3>4.5.3. Review Inputs (The "Health Report")</h3>
+                            <p>In accordance with ISO 10002 (Clause 8.6.2), the review must consider the following standardized data points:</p>
+                            <ul>
+                                <li><strong>Customer Satisfaction Index (CSI):</strong> Trends in survey scores (Resolution Quality, Timeliness, Effort) compared against industry benchmarks.</li>
+                                <li><strong>Audit Results:</strong> Findings from regular Quality and Safety Audits that verify if staff are following the SOP step-by-step.</li>
+                                <li><strong>Escalation Summaries:</strong> Review of the Escalation Log, focusing on "Critical" cases and recurring "gold nuggets".</li>
+                                <li><strong>Process Performance:</strong> Adherence to SLAs (Section 2.8) and the volume of cases referred to External Dispute Resolution.</li>
+                                <li><strong>Systemic Risks:</strong> Identification of new technical glitches, regulatory changes, or capacity constraints.</li>
+                            </ul>
+
+                            <h3>4.5.4. Review Outputs (Strategic Actions)</h3>
+                            <p>The conclusion of the review must result in documented decisions regarding:</p>
+                            <ul>
+                                <li><strong>SOP Revisions:</strong> Approval of new "One Best Way" standards designed by the Advisory Team to eliminate identified root causes.</li>
+                                <li><strong>Resource Allocation:</strong> Decisions on additional personnel, specialized training programs, or technology investments (e.g., new CRM controls).</li>
+                                <li><strong>Performance Target Adjustments:</strong> Recalibrating SLAs or service promises to ensure they remain challenging but realistic.</li>
+                                <li><strong>Product/Service Improvements:</strong> Recommendations to the broader organization for fixing systemic flaws in products themselves.</li>
+                            </ul>
+
+                            <h3>4.5.5. Closing the Strategic Loop</h3>
+                            <ul>
+                                <li><strong>Huddle Updates:</strong> Leaders must share "Strategic Rock" resolutions during the next Morning Huddle to show staff that feedback resulted in real change.</li>
+                                <li><strong>Record Retention:</strong> Minutes of the review, including all assigned action items and deadlines, must be archived in the Document History Table for future audits and version control.</li>
+                            </ul>
+                        `
+                    },
+                    {
+                        id: 'sop-sec5',
+                        title: 'Section 5: Supporting Documentation & Governance',
+                        label: 'Governance & SOP Index Master',
+                        level: 1,
+                        type: 'web',
+                        content: `
+                            <h2>Section 5: Supporting Documentation & Governance</h2>
+                            <div class="callout">
+                                <strong>Governance Standard:</strong> Master documentation management, version control, scenario training, operational glossary, and supporting document hierarchy.
+                            </div>
+                            <p>This master section governs document metadata, version history, change control protocols, illustrative case scenarios, operational definitions, and the index of related SOPs. Select any sub-section on the left navigation directory (<strong>5.1 Version History & Document Control</strong> through <strong>5.4 Master List of Related SOPs</strong>) to view full standard operating procedures.</p>
+                        `
+                    },
+                    {
+                        id: 'sop-5-1',
+                        title: '5.1 Version History & Document Control',
+                        label: 'Version Control & Metadata',
+                        level: 2,
+                        type: 'web',
+                        content: `
+                            <h2>5.1 Version History & Document Control</h2>
+
+                            <h3>5.1.1. Objective</h3>
+                            <p>The objective of document control is to maintain the information integrity of the Customer Service System. By standardizing how we track changes, we eliminate the waste of "fragmented data" and ensure that process gains are stabilized before further continuous improvement is attempted.</p>
+
+                            <h3>5.1.2. Document Metadata (Header/Footer Requirements)</h3>
+                            <p>Every page of this SOP must include the following meta-information in the header or footer to ensure it can be verified for auditing and revision purposes:</p>
+                            <ul>
+                                <li><strong>Document Title:</strong> [e.g., Customer Service Master SOP].</li>
+                                <li><strong>Unique ID Number:</strong> [e.g., CS-SOP-001].</li>
+                                <li><strong>Current Version Number:</strong> [e.g., v1.1.0].</li>
+                                <li><strong>Effective Date:</strong> The date this standard becomes mandatory for all staff.</li>
+                                <li><strong>File Path:</strong> The specific digital repository address where the master version resides.</li>
+                            </ul>
+
+                            <h3>5.1.3. Version History Table</h3>
+                            <p>A dedicated Document History Table must be maintained at the start of this SOP to record the evolution of the standard.</p>
+                            <table>
+                                <thead>
+                                    <tr>
+                                        <th>Version No.</th>
+                                        <th>Revision Date</th>
+                                        <th>Description of Affected Parts & Changes</th>
+                                        <th>Author / Writer</th>
+                                        <th>Approval Signature</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr>
+                                        <td><strong>1.0.0</strong></td>
+                                        <td>[Date]</td>
+                                        <td>Initial release and implementation of core frontline workflows.</td>
+                                        <td>Advisory Team</td>
+                                        <td>[Head of Ops]</td>
+                                    </tr>
+                                    <tr>
+                                        <td><strong>1.1.0</strong></td>
+                                        <td>[Date]</td>
+                                        <td>Integration of Priority Matrix (2.5) and External Dispute Resolution (3.0).</td>
+                                        <td>[Lead Agent]</td>
+                                        <td>[QA Manager]</td>
+                                    </tr>
+                                </tbody>
+                            </table>
+
+                            <h3>5.1.4. Review and Revision Protocol</h3>
+                            <ul>
+                                <li><strong>Scheduled Review:</strong> This SOP must be formally reviewed at least annually to ensure it continues to reflect best practice and current software layouts.</li>
+                                <li><strong>Triggered Revision:</strong> A revision is mandatory whenever a "gold nugget" identified in a Morning Huddle results in a permanent process change or when new equipment/technology is introduced.</li>
+                                <li><strong>Collaborative Drafting:</strong> To ensure user-friendliness, all revisions must be drafted in collaboration with frontline employees who perform the task daily.</li>
+                            </ul>
+
+                            <h3>5.1.5. Controlled Access and Archiving</h3>
+                            <ul>
+                                <li><strong>Single Version Rule:</strong> To avoid confusion and producing different results, only the current approved version of the SOP may be accessible in the workspace.</li>
+                                <li><strong>Prompt Archiving:</strong> Outdated versions must be immediately removed and moved to a separate archive folder to prevent accidental use.</li>
+                                <li><strong>Uncontrolled Copy Disclaimer:</strong> Any printed copy of this document is considered "UNCONTROLLED." Staff are responsible for checking the digital knowledge base to ensure they are using the latest version before performing a critical task.</li>
+                            </ul>
+                        `
+                    },
+                    {
+                        id: 'sop-5-2',
+                        title: '5.2 Case Scenario Examples',
+                        label: 'Operational Case Scenarios',
+                        level: 2,
+                        type: 'web',
+                        content: `
+                            <h2>5.2 Case Scenario Examples</h2>
+                            <p>The following sample case scenarios illustrate how the "One Best Way" is applied to different customer interactions. These examples demonstrate the transition from haphazard responses to a standardized, reliable workflow that values the customer’s time.</p>
+                            
+                            <h3>Scenario A: Routine Status Inquiry (Normal Priority)</h3>
+                            <ul>
+                                <li><strong>Situation:</strong> A customer calls to ask for the expected disbursement date of their processed claim.</li>
+                                <li><strong>Channel:</strong> Phone.</li>
+                                <li><strong>Action Taken:</strong>
+                                    <ul style="margin-top: 5px; margin-bottom: 5px;">
+                                        <li><em>Verification:</em> The agent uses the simplified verification protocol (Full name and last 4 digits of ID) to keep the journey effortless.</li>
+                                        <li><em>Logging:</em> The agent opens a CRM record immediately to make the inquiry "visible".</li>
+                                        <li><em>Triage:</em> Categorized as "General Information" and assigned "Normal" priority.</li>
+                                        <li><em>Resolution:</em> The agent consults the digital "One Best Way Guide" for status checks and provides the customer with a specific date for when the funds will be released.</li>
+                                    </ul>
+                                </li>
+                                <li><strong>Outcome:</strong> The inquiry is resolved "first-time right" at the point of contact, preventing a follow-up call.</li>
+                            </ul>
+
+                            <h3>Scenario B: Billing Error (High Priority)</h3>
+                            <ul>
+                                <li><strong>Situation:</strong> A customer sends an email stating they were charged twice for their monthly premium.</li>
+                                <li><strong>Channel:</strong> Email.</li>
+                                <li><strong>Action Taken:</strong>
+                                    <ul style="margin-top: 5px; margin-bottom: 5px;">
+                                        <li><em>Logging & Acknowledgment:</em> The automated system generates a Case Number and sends an acknowledgment within 1 hour.</li>
+                                        <li><em>Triage:</em> The agent categorizes this as "Billing Error" and assigns "High" priority.</li>
+                                        <li><em>Resolution:</em> The agent follows the billing reconciliation SOP, identifies the duplicate transaction, and initiates a refund.</li>
+                                        <li><em>Validation:</em> The agent sends a personal email confirmation to the customer with the refund transaction number.</li>
+                                    </ul>
+                                </li>
+                                <li><strong>Outcome:</strong> The issue is resolved within the same business day, meeting the High priority SLA.</li>
+                            </ul>
+
+                            <h3>Scenario C: Unauthorized Account Access (Critical Priority & Escalation)</h3>
+                            <ul>
+                                <li><strong>Situation:</strong> A customer reports through Live Chat that they cannot log in and suspect their account has been compromised.</li>
+                                <li><strong>Channel:</strong> Live Chat.</li>
+                                <li><strong>Action Taken:</strong>
+                                    <ul style="margin-top: 5px; margin-bottom: 5px;">
+                                        <li><em>Identification:</em> The agent recognizes this as a high-risk security/fraud concern.</li>
+                                        <li><em>Triage:</em> Assigned "Critical" priority.</li>
+                                        <li><em>Immediate Escalation:</em> Following the Escalation Procedure, the agent immediately alerts the Area Team Leader and the Fraud Specialist.</li>
+                                        <li><em>Ownership:</em> The Fraud Specialist assumes ownership of the journey, secures the account, and acknowledges the issue with the customer within 30 minutes.</li>
+                                        <li><em>Root-Cause Review:</em> The incident is recorded as a "gold nugget" to be discussed at the next Morning Huddle to determine if a Poka-Yoke (mistake-proofing) control is needed in the login process.</li>
+                                    </ul>
+                                </li>
+                                <li><strong>Outcome:</strong> The risk is mitigated rapidly through tiered accountability, providing the customer with peace of mind.</li>
+                            </ul>
+                        `
+                    },
+                    {
+                        id: 'sop-5-3',
+                        title: '5.3 Glossary of Terms & Definitions',
+                        label: 'Terms & Abbreviations',
+                        level: 2,
+                        type: 'web',
+                        content: `
+                            <h2>5.3 Glossary of Terms & Definitions</h2>
+                            
+                            <h3>5.3.1. Core Abbreviations</h3>
+                            <ul>
+                                <li><strong>CCC:</strong> Consistent, Concurrent, and Compliant. The three requirements for a high-quality standard; the procedure must be followed the same way every time, be used while the work is happening, and meet all regulatory rules.</li>
+                                <li><strong>CRM:</strong> Customer Relationship Management. The software system used to log interaction history, track case numbers, and manage customer data.</li>
+                                <li><strong>CSI:</strong> Customer Satisfaction Index. A weighted performance indicator that combines direct survey scores with indirect data (like complaint frequency) to show the overall "health" of service delivery.</li>
+                                <li><strong>DILO:</strong> Day in the Life Of. A standardized schedule used by managers to ensure their essential leadership routines are performed at the correct times each day.</li>
+                                <li><strong>EDR:</strong> External Dispute Resolution. A process for resolving complaints through an independent third party (like an ombudsman) after all internal escalation tiers have been exhausted.</li>
+                                <li><strong>ISO:</strong> International Organization for Standardization. An independent, non-governmental international organization that develops standards to ensure the quality, safety, and efficiency of systems and services.</li>
+                                <li><strong>IVR:</strong> Interactive Voice Response. An automated telephony system that interacts with callers, gathers information, and routes calls to the appropriate team or self-service option.</li>
+                                <li><strong>KPI:</strong> Key Performance Indicator. A measurable value that demonstrates how effectively the organization is achieving its core business objectives.</li>
+                                <li><strong>LSW:</strong> Leader Standard Work. A specific set of SOPs for team leaders and managers that standardizes the management routines (like huddles and floor walks) required to support frontline work.</li>
+                                <li><strong>SLA:</strong> Service Level Agreement. A formal commitment defining the maximum timeframes allowed for acknowledging and resolving different types of customer inquiries.</li>
+                                <li><strong>SME:</strong> Subject Matter Expert. An individual who has deep, specialized knowledge of a specific process, product, or technical area.</li>
+                                <li><strong>SOP:</strong> Standard Operating Procedure. A set of step-by-step instructions designed to help staff perform routine activities consistently, safely, and efficiently.</li>
+                            </ul>
+
+                            <h3>5.3.2. Operational Terms</h3>
+                            <ul>
+                                <li><strong>5 Whys:</strong> A simple problem-solving method that involves asking "Why?" repeatedly (usually five times) to peel away layers of symptoms and find the underlying root cause of a failure.</li>
+                                <li><strong>Gemba Walk (Process Walk):</strong> A lean practice where leaders spend time where the real work happens (the "Gemba") to observe adherence to standards, assist with problems, and build relationships with staff.</li>
+                                <li><strong>Gold Nuggets:</strong> Process failures or "rocks" that are identified during daily work and treated as valuable opportunities for systemic improvement rather than just something to be "fire fought".</li>
+                                <li><strong>Huddle:</strong> A brief (typically 15-minute) daily team meeting held standing up at a visual management board to review performance, recognize wins, and identify immediate roadblocks.</li>
+                                <li><strong>One Best Way:</strong> A user-friendly synonym for Standard Work; it represents the current most efficient and safe method of performing a task as agreed upon by the team.</li>
+                                <li><strong>Poka-Yoke (Mistake-Proofing):</strong> A mechanism or process design that makes it mechanically or logically impossible for an error to occur (e.g., a software field that won't let you click "Submit" until the ID is verified).</li>
+                                <li><strong>Rocks vs. Sand:</strong> "Rocks" are large, systemic issues or top-down strategic projects; "Sand" refers to the innumerable small, recurring issues at the frontline that cumulatively disrupt daily flow.</li>
+                                <li><strong>Triage:</strong> The process of evaluating and categorizing an incoming inquiry based on its severity and complexity to determine the correct priority level and routing path.</li>
+                            </ul>
+                        `
+                    },
+                    {
+                        id: 'sop-5-4',
+                        title: '5.4 Master List of Related SOPs',
+                        label: 'Document Hierarchy & Index',
+                        level: 2,
+                        type: 'web',
+                        content: `
+                            <h2>5.4 Master List of Related SOPs</h2>
+                            
+                            <h3>5.4.1. Objective</h3>
+                            <p>The objective of this master list is to provide a centralized index of all supporting procedures that operate under the framework of the Customer Service Master SOP. This hierarchy ensures that while the Master SOP governs the "Inquiry Journey," specific technical tasks are performed using the most detailed and current "Work Instructions" available.</p>
+
+                            <h3>5.4.2. Document Hierarchy</h3>
+                            <p>We utilize a three-tier documentation structure to maintain clarity and prevent the Master SOP from becoming too "bulky":</p>
+                            <ul>
+                                <li><strong>Tier 1: Master SOP (This Document):</strong> Defines the end-to-end workflow, governance, and service promises.</li>
+                                <li><strong>Tier 2: Specialized Procedures:</strong> Detailed step-by-step guides for specific departments (e.g., Billing, Fraud, Technical).</li>
+                                <li><strong>Tier 3: Work Instructions & Job Aids:</strong> Granular, often pictorial guides or checklists for single, high-risk tasks.</li>
+                            </ul>
+
+                            <h3>5.4.3. Index of Related Documentation</h3>
+                            <p>Staff must refer to the following specific standards when the Triage process (Section 2.2) identifies a specialized requirement.</p>
+                            <table>
+                                <thead>
+                                    <tr>
+                                        <th>Document ID</th>
+                                        <th>Related SOP / Work Instruction Title</th>
+                                        <th>Purpose within the Hierarchy</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr>
+                                        <td><strong>CS-TECH-001</strong></td>
+                                        <td>Technical Troubleshooting Guide</td>
+                                        <td>Detailed "How-To" for resolving software glitches and product hardware failures.</td>
+                                    </tr>
+                                    <tr>
+                                        <td><strong>FIN-PAY-002</strong></td>
+                                        <td>Billing Reconciliation & Refund SOP</td>
+                                        <td>Rigorous "check, approve, and pay" steps designed to prevent invoice fraud.</td>
+                                    </tr>
+                                    <tr>
+                                        <td><strong>SEC-IDV-003</strong></td>
+                                        <td>Identity Verification & Fraud Protocol</td>
+                                        <td>Secure identity checking database steps to mitigate account compromise risks.</td>
+                                    </tr>
+                                    <tr>
+                                        <td><strong>OPS-LSW-004</strong></td>
+                                        <td>Leader Standard Work (LSW) Checklist</td>
+                                        <td>Daily and weekly checkpoints for managers to sustain process gains.</td>
+                                    </tr>
+                                    <tr>
+                                        <td><strong>QUA-SUR-005</strong></td>
+                                        <td>ISO 10004 Feedback Survey SOP</td>
+                                        <td>Detailed instructions for the manual collection and analysis of satisfaction data.</td>
+                                    </tr>
+                                    <tr>
+                                        <td><strong>ADM-FIL-006</strong></td>
+                                        <td>File Naming & Archiving Standard</td>
+                                        <td>Ensuring all CRM records and evidence remain searchable and organized.</td>
+                                    </tr>
+                                </tbody>
+                            </table>
+
+                            <h3>5.4.4. Maintenance of the Master List</h3>
+                            <p>This list must be reviewed during the Management Review Protocol (Section 4.5). Whenever a new specialized SOP is approved or an old one is retired, this index must be updated immediately to ensure information integrity across the organization.</p>
+
+                            <h3>5.4.5. Accessing Supporting Documentation</h3>
+                            <p>To ensure these tools are "live" and accessible, all documents listed above are hyperlinked within the digital version of this Master SOP. If using a printed uncontrolled copy, staff must consult the Area Team Leader to obtain the latest revision of a specific Work Instruction.</p>
+                        `
+                    }
+                ]
+            },
+            {
+                categoryId: 'cat-inquiry',
+                categoryName: 'Inquiry SOP',
+                isOpen: false, 
+                workflows: [
+                    { id: 'logging', title: 'Customer Contact Logging Protocol', label: 'Data Entry & Verification', level: 1, type: 'image', fileSrc: 'Customer Contact Logging Protocol.png' },
+                    { id: 'sla', title: 'SLA & Time Frames Workflow', label: 'Service Level Agreements', level: 1, type: 'image', fileSrc: 'SLA & Time Frames Workflow.png' },
+                    { id: 'escalation-formula', title: 'Tiered Customer Issue Resolution', label: 'Escalation Tiering', level: 1, type: 'image', fileSrc: 'Tiered Customer Issue Resolution.png' },
+                    { id: 'resolution', title: 'The Resolution Process Workflow', label: 'General Resolution Standard', level: 1, type: 'image', fileSrc: 'The Resolution Process Workflow.png' },
+                    { id: 'escalation-criteria', title: 'Criteria & Tiered Accountability', label: 'Escalation Triggers', level: 1, type: 'image', fileSrc: 'Escalation Triggers.png' }
+                ]
+            },
+            {
+                categoryId: 'cat-request',
+                categoryName: 'Request SOP',
+                isOpen: false,
+                workflows: [
+                    { id: 'req-account', title: 'Account Creation Process', label: 'Onboarding Placeholder', level: 1, type: 'image', fileSrc: 'Account Creation Process.png' },
+                    { id: 'req-upgrade', title: 'Service Upgrade Protocol', label: 'Sales Placeholder', level: 1, type: 'image', fileSrc: 'Service Upgrade Protocol.png' }
+                ]
+            },
+            {
+                categoryId: 'cat-complaint',
+                categoryName: 'Complaint SOP',
+                isOpen: false,
+                workflows: [
+                    { id: 'comp-refund', title: 'Refund Processing Guidelines', label: 'Finance Placeholder', level: 1, type: 'image', fileSrc: 'Refund Processing Guidelines.png' },
+                    { id: 'comp-deescalation', title: 'Hostile Customer De-escalation', label: 'Safety Placeholder', level: 1, type: 'image', fileSrc: 'Hostile Customer De-escalation.png' },
+                    { id: 'comp-legal', title: 'Legal Threat Routing', label: 'Compliance Placeholder', level: 1, type: 'image', fileSrc: 'Legal Threat Routing.png' }
+                ]
+            }
+        ];
+
+        let currentScale = 1;
+        const scaleStep = 0.15;
+        const maxScale = 4;
+        const minScale = 0.3;
+
+        let isDragging = false;
+        let startX, startY, scrollLeft, scrollTop;
+        let isWebMode = false;
+
+        // Flattened list of all workflows for sequential navigation
+        let allWorkflowsFlat = [];
+        let currentWorkflowIndex = -1;
+
+        function buildFlatWorkflowList() {
+            allWorkflowsFlat = [];
+            workflowData.forEach(cat => {
+                cat.workflows.forEach(wf => {
+                    allWorkflowsFlat.push(wf);
+                });
+            });
+        }
+
+        function init() {
+            buildFlatWorkflowList();
+            const container = document.getElementById('categoryContainer');
+            if (!container) return;
+
+            workflowData.forEach((category) => {
+                const header = document.createElement('div');
+                header.className = `category-header ${category.isOpen ? 'open' : ''}`;
+                header.innerHTML = `
+                    <span>📁 ${category.categoryName}</span>
+                    <span class="category-icon">▶</span>
+                `;
+                
+                const ul = document.createElement('ul');
+                ul.className = `workflow-list ${category.isOpen ? 'open' : ''}`;
+                ul.id = category.categoryId;
+
+                let currentSubUl = null;
+                let currentLevel1Li = null;
+
+                category.workflows.forEach((workflow, idx) => {
+                    if (workflow.level === 1) {
+                        const li = document.createElement('li');
+                        li.className = 'workflow-item';
+                        li.id = `item-${workflow.id}`;
+
+                        const hasSubItems = (idx + 1 < category.workflows.length) && (category.workflows[idx + 1].level === 2);
+
+                        li.innerHTML = `
+                            <div class="workflow-item-header">
+                                <div>
+                                    <div class="workflow-title">${workflow.title}</div>
+                                    <div class="workflow-label">${workflow.label}</div>
+                                </div>
+                                ${hasSubItems ? `<span class="sub-toggle-icon" id="toggle-icon-${workflow.id}">▶</span>` : ''}
+                            </div>
+                        `;
+
+                        li.onclick = (e) => {
+                            if (e.target.classList.contains('sub-toggle-icon')) {
+                                e.stopPropagation();
+                                toggleSubMenu(workflow.id);
+                            } else {
+                                loadWorkflow(workflow);
+                            }
+                        };
+
+                        ul.appendChild(li);
+                        currentLevel1Li = li;
+
+                        if (hasSubItems) {
+                            currentSubUl = document.createElement('ul');
+                            currentSubUl.className = 'sub-workflow-list';
+                            currentSubUl.id = `sub-list-${workflow.id}`;
+                            ul.appendChild(currentSubUl);
+                        } else {
+                            currentSubUl = null;
+                        }
+
+                    } else if (workflow.level === 2) {
+                        const subLi = document.createElement('li');
+                        subLi.className = 'workflow-item sub-item';
+                        subLi.id = `item-${workflow.id}`;
+                        subLi.innerHTML = `
+                            <div class="workflow-title">${workflow.title}</div>
+                            <div class="workflow-label">${workflow.label}</div>
+                        `;
+                        subLi.onclick = () => loadWorkflow(workflow);
+
+                        if (currentSubUl) {
+                            currentSubUl.appendChild(subLi);
+                        } else {
+                            ul.appendChild(subLi);
+                        }
+                    }
+                });
+
+                header.onclick = () => {
+                    if (document.getElementById('searchInput').value.trim() === '') {
+                        header.classList.toggle('open');
+                        ul.classList.toggle('open');
+                        category.isOpen = header.classList.contains('open');
+                    }
+                };
+
+                container.appendChild(header);
+                container.appendChild(ul);
+            });
+
+            setupInteractivity();
+        }
+
+        function toggleSubMenu(parentId) {
+            const subUl = document.getElementById(`sub-list-${parentId}`);
+            const icon = document.getElementById(`toggle-icon-${parentId}`);
+            if (subUl) {
+                subUl.classList.toggle('open');
+                if (icon) icon.classList.toggle('open', subUl.classList.contains('open'));
+            }
+        }
+
+        function filterWorkflows() {
+            const query = document.getElementById('searchInput').value.toLowerCase().trim();
+            let anyMatch = false;
+
+            workflowData.forEach((category) => {
+                let categoryMatch = false;
+                const ul = document.getElementById(category.categoryId);
+                if (!ul) return;
+                const header = ul.previousElementSibling;
+
+                category.workflows.forEach((workflow) => {
+                    const li = document.getElementById(`item-${workflow.id}`);
+                    if (!li) return;
+                    const matchesSearch = workflow.title.toLowerCase().includes(query) || 
+                                          workflow.label.toLowerCase().includes(query);
+                    
+                    if (matchesSearch) {
+                        li.style.display = 'block';
+                        categoryMatch = true;
+                        anyMatch = true;
+
+                        // Expand sub menu if child matches search
+                        if (workflow.level === 2) {
+                            const parentSubUl = li.parentElement;
+                            if (parentSubUl && parentSubUl.classList.contains('sub-workflow-list')) {
+                                parentSubUl.classList.add('open');
+                                const parentId = parentSubUl.id.replace('sub-list-', '');
+                                const icon = document.getElementById(`toggle-icon-${parentId}`);
+                                if (icon) icon.classList.add('open');
+                            }
+                        }
+                    } else {
+                        li.style.display = 'none';
+                    }
+                });
+
+                if (query.length === 0) {
+                    header.style.display = 'flex';
+                    if (category.isOpen) {
+                        header.classList.add('open');
+                        ul.classList.add('open');
+                    } else {
+                        header.classList.remove('open');
+                        ul.classList.remove('open');
+                    }
+                } else {
+                    if (categoryMatch) {
+                        header.style.display = 'flex';
+                        header.classList.add('open');
+                        ul.classList.add('open');
+                    } else {
+                        header.style.display = 'none';
+                        header.classList.remove('open');
+                        ul.classList.remove('open');
+                    }
+                }
+            });
+
+            const noRes = document.getElementById('noResults');
+            if (noRes) noRes.style.display = (anyMatch || query.length === 0) ? 'none' : 'block';
+        }
+
+        function toggleSidebar() {
+            const sidebar = document.getElementById('sidebar');
+            if (sidebar) sidebar.classList.toggle('collapsed');
+        }
+
+        function setupInteractivity() {
+            const viewer = document.getElementById('viewerContainer');
+            if (!viewer) return;
+
+            viewer.addEventListener('wheel', (e) => {
+                if (isWebMode || document.getElementById('canvas').style.display === 'none') return;
+                e.preventDefault(); 
+                if (e.deltaY < 0) zoomIn(); else zoomOut();
+            }, { passive: false });
+
+            viewer.addEventListener('mousedown', (e) => {
+                if (isWebMode) return;
+                isDragging = true;
+                viewer.classList.add('grabbing');
+                startX = e.pageX - viewer.offsetLeft;
+                startY = e.pageY - viewer.offsetTop;
+                scrollLeft = viewer.scrollLeft;
+                scrollTop = viewer.scrollTop;
+            });
+
+            viewer.addEventListener('mouseleave', () => {
+                isDragging = false;
+                viewer.classList.remove('grabbing');
+            });
+
+            viewer.addEventListener('mouseup', () => {
+                isDragging = false;
+                viewer.classList.remove('grabbing');
+            });
+
+            viewer.addEventListener('mousemove', (e) => {
+                if (!isDragging || isWebMode) return;
+                e.preventDefault(); 
+                const x = e.pageX - viewer.offsetLeft;
+                const y = e.pageY - viewer.offsetTop;
+                const moveX = (x - startX) * 1.5; 
+                const moveY = (y - startY) * 1.5;
+                viewer.scrollLeft = scrollLeft - moveX;
+                viewer.scrollTop = scrollTop - moveY;
+            });
+        }
+
+        // Automatic Linkifier for Cross-Section References
+        function linkifySectionReferences(html) {
+            return html.replace(/\bSection\s+([1-5])(?:\.([1-9]))?\b/gi, (match, sec, subsec) => {
+                let targetId = subsec ? `sop-${sec}-${subsec}` : `sop-sec${sec}`;
+                return `<a href="javascript:void(0)" class="sop-inline-link" onclick="loadWorkflowById('${targetId}')">${match}</a>`;
+            });
+        }
+
+        function generateNavBarHtml(position) {
+            const isFirst = currentWorkflowIndex <= 0;
+            const isLast = currentWorkflowIndex >= allWorkflowsFlat.length - 1;
+
+            return `
+                <div class="section-nav-bar ${position}">
+                    <button class="nav-btn" onclick="navigateStep(-1)" ${isFirst ? 'disabled' : ''}>
+                        ◀ Previous Section
+                    </button>
+                    <button class="nav-btn" onclick="loadWorkflowById('sop-intro')">
+                        🏠 Master Home
+                    </button>
+                    <button class="nav-btn" onclick="navigateStep(1)" ${isLast ? 'disabled' : ''}>
+                        Next Section ▶
+                    </button>
+                </div>
+            `;
+        }
+
+        function navigateStep(direction) {
+            const newIndex = currentWorkflowIndex + direction;
+            if (newIndex >= 0 && newIndex < allWorkflowsFlat.length) {
+                loadWorkflow(allWorkflowsFlat[newIndex]);
+            }
+        }
+
+        function loadWorkflowById(id) {
+            const targetWf = allWorkflowsFlat.find(w => w.id === id);
+            if (targetWf) {
+                loadWorkflow(targetWf);
+            }
+        }
+
+        function loadWorkflow(workflow) {
+            currentWorkflowIndex = allWorkflowsFlat.findIndex(w => w.id === workflow.id);
+
+            document.querySelectorAll('.workflow-item').forEach(el => el.classList.remove('active'));
+            const activeLi = document.getElementById(`item-${workflow.id}`);
+            if (activeLi) {
+                activeLi.classList.add('active');
+
+                // Auto-expand parent sub-menu if opening a Level 2 item
+                if (workflow.level === 2) {
+                    const parentSubUl = activeLi.parentElement;
+                    if (parentSubUl && parentSubUl.classList.contains('sub-workflow-list')) {
+                        parentSubUl.classList.add('open');
+                        const parentId = parentSubUl.id.replace('sub-list-', '');
+                        const icon = document.getElementById(`toggle-icon-${parentId}`);
+                        if (icon) icon.classList.add('open');
+                    }
+                } else if (workflow.level === 1) {
+                    // Auto-expand immediate sub-menu when clicking Level 1 master header
+                    const subUl = document.getElementById(`sub-list-${workflow.id}`);
+                    const icon = document.getElementById(`toggle-icon-${workflow.id}`);
+                    if (subUl) {
+                        subUl.classList.add('open');
+                        if (icon) icon.classList.add('open');
+                    }
+                }
+            }
+            
+            const titleEl = document.getElementById('currentWorkflowTitle');
+            if (titleEl) titleEl.innerText = workflow.title;
+            
+            const emptyState = document.getElementById('emptyState');
+            if (emptyState) emptyState.style.display = 'none';
+
+            const canvas = document.getElementById('canvas');
+            const articleView = document.getElementById('articleView');
+            const zoomControls = document.getElementById('zoomControls');
+            const viewerContainer = document.getElementById('viewerContainer');
+
+            if (workflow.type === 'web') {
+                isWebMode = true;
+                if (canvas) canvas.style.display = 'none';
+                if (articleView) {
+                    articleView.style.display = 'block';
+                    const processedContent = linkifySectionReferences(workflow.content);
+                    const topNav = generateNavBarHtml('top');
+                    const bottomNav = generateNavBarHtml('bottom');
+                    articleView.innerHTML = topNav + processedContent + bottomNav;
+                }
+                if (zoomControls) zoomControls.style.display = 'none';
+                if (viewerContainer) {
+                    viewerContainer.classList.remove('grab-mode');
+                    viewerContainer.scrollTop = 0;
+                }
+            } else {
+                isWebMode = false;
+                if (articleView) {
+                    articleView.style.display = 'none';
+                    articleView.innerHTML = '';
+                }
+                if (canvas) canvas.style.display = 'block';
+                const img = document.getElementById('workflowImage');
+                if (img) img.src = workflow.fileSrc;
+
+                if (zoomControls) zoomControls.style.display = 'block';
+                if (viewerContainer) viewerContainer.classList.add('grab-mode');
+                resetZoom();
+            }
+        }
+
+        function applyZoom() {
+            const canvas = document.getElementById('canvas');
+            if (canvas) canvas.style.transform = `scale(${currentScale})`;
+        }
+
+        function zoomIn() {
+            if (currentScale < maxScale) {
+                currentScale = Math.min(currentScale + scaleStep, maxScale);
+                applyZoom();
+            }
+        }
+
+        function zoomOut() {
+            if (currentScale > minScale) {
+                currentScale = Math.max(currentScale - scaleStep, minScale);
+                applyZoom();
+            }
+        }
+
+        function resetZoom() {
+            currentScale = 1;
+            applyZoom();
+            const viewer = document.getElementById('viewerContainer');
+            if (viewer) {
+                viewer.scrollTop = 0;
+                viewer.scrollLeft = 0;
+            }
+        }
+
+        window.onload = init;
+    </script>
+</body>
+</html>
