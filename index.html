@@ -1894,6 +1894,7 @@
                             </ul>
 
                             <h3>4.5.5. Closing the Strategic Loop</h3>
+                            <p>To maintain radical transparency, the outcomes of the Management Review must be communicated back to the frontline teams:</p>
                             <ul>
                                 <li><strong>Huddle Updates:</strong> Leaders must share "Strategic Rock" resolutions during the next Morning Huddle to show staff that feedback resulted in real change.</li>
                                 <li><strong>Record Retention:</strong> Minutes of the review, including all assigned action items and deadlines, must be archived in the Document History Table for future audits and version control.</li>
@@ -2454,13 +2455,13 @@
             return `
                 <div class="section-nav-bar ${position}">
                     <button class="nav-btn" onclick="navigateStep(-1)" ${isFirst ? 'disabled' : ''}>
-                        ◀ Previous Section
+                        ◀ Back
                     </button>
                     <button class="nav-btn" onclick="loadWorkflowById('sop-intro')">
-                        🏠 Master Home
+                        🏠 Home
                     </button>
                     <button class="nav-btn" onclick="navigateStep(1)" ${isLast ? 'disabled' : ''}>
-                        Next Section ▶
+                        Next ▶
                     </button>
                 </div>
             `;
